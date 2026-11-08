@@ -39,7 +39,7 @@ h1{font-size:clamp(2rem,5vw,3.8rem);line-height:1.12;max-width:760px;margin:12px
 .notice{display:flex;gap:11px;align-items:flex-start;background:#fff8ed;border-left:4px solid #dc9a42;border-radius:10px;padding:14px 17px;color:#6c4c1e;font-size:.88rem;margin:22px 0}.notice b{color:#493412}
 .empty{padding:28px 20px;background:white;text-align:center;border:1px dashed #bfd0d8;border-radius:17px}.empty h3{margin:0 0 6px}.empty p{color:var(--muted);margin:0}
 .footer{border-top:1px solid var(--line);margin-top:35px;padding:23px 2px;color:var(--muted);font-size:.8rem}.footer a{text-decoration:underline}.footer p{margin:8px 0}
-.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.price-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:15px}.price-actions input{max-width:200px;min-width:120px;border:1px solid #cbdce2;border-radius:10px;min-height:42px;padding:8px 10px}.price-actions button{font-size:.83rem}.price-register{border-top:1px solid #dce7eb;margin-top:17px;padding-top:13px}.price-register label{font-size:.82rem;font-weight:800}.price-register small{display:block;color:var(--muted);font-size:.74rem;margin-top:8px}.price-note{background:#eaf7f5;border:1px solid #c9e8e3;color:#146d6a;border-radius:12px;padding:12px;margin:12px 0;font-weight:800}.compare-section{margin-bottom:22px}.compare-section h2{margin:0;font-size:1.28rem}.compare-section p{color:var(--muted);font-size:.86rem;margin:7px 0}.compare-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:13px}.compare-actions select{border:1px solid #cbdce2;border-radius:10px;padding:9px;max-width:100%}.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:850px){.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.header{padding-bottom:70px}.hero{margin-top:38px}.badge{font-size:.7rem}.wrap{margin-top:-38px}}
 @media(max-width:600px){.header{padding:17px 17px 68px}.hero{margin-top:32px}.hero p{font-size:.91rem}.nav{align-items:flex-start}.brand{font-size:.82rem}.badge{max-width:115px;line-height:1.3}.wrap{padding:0 12px}.panel{border-radius:17px;padding:18px}.section-head{display:block}.pill{display:inline-block;margin-top:10px}.form-grid{gap:13px}.field label{font-size:.75rem}.field select,.field input{font-size:.92rem;padding:10px 8px}.stats{grid-template-columns:repeat(3,1fr);gap:6px}.stat{padding:12px 8px}.stat b{font-size:1.15rem}.stat span{font-size:.69rem}.cards{grid-template-columns:1fr}.card{padding:18px}.results h2{font-size:1.2rem}.route{font-size:.8rem}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
@@ -47,7 +47,7 @@ h1{font-size:clamp(2rem,5vw,3.8rem);line-height:1.12;max-width:760px;margin:12px
 </head>
 <body>
 <header class="header">
-  <div class="nav"><div class="brand"><i aria-hidden="true">✈</i><span>VOOS · FÉRIAS ESCOLARES</span></div><span class="badge">100% sem preços fictícios</span></div>
+  <div class="nav"><div class="brand"><i aria-hidden="true">✈</i><span>VOOS · FÉRIAS ESCOLARES</span></div><span class="badge">Comparação de preços</span></div>
   <div class="hero"><div class="eyebrow">Planeador familiar de viagens</div><h1>De Lisboa para <em>Recife</em>, sem faltar às aulas.</h1><p>Descobre combinações de datas durante as férias escolares em Portugal continental. Depois, compara as tarifas reais nas plataformas de voos.</p><div class="route"><span>LIS</span><span aria-hidden="true">⇄</span><span>REC</span><small>· ida e volta</small></div></div>
 </header>
 <main class="wrap">
@@ -63,13 +63,21 @@ h1{font-size:clamp(2rem,5vw,3.8rem);line-height:1.12;max-width:760px;margin:12px
    <div class="field"><label for="maxDays">Máximo de dias</label><input id="maxDays" type="number" min="3" max="10" value="10" inputmode="numeric"></div>
    <div class="field"><label for="buffer">Margem antes das aulas</label><select id="buffer"><option value="1">1 dia para chegar</option><option value="2">2 dias de segurança</option><option value="3">3 dias de segurança</option></select></div>
    <div class="field"><label for="daypref">Preferência de dias</label><select id="daypref"><option value="all">Qualquer dia</option><option value="midweek">Ida e volta em dias úteis</option><option value="weekend">Partida ao fim de semana</option></select></div>
+   <div class="field"><label for="direct">Escalas</label><select id="direct"><option value="all">Diretos e com escala</option><option value="true">Apenas voos diretos</option></select></div>
   </div>
-  <div class="action-bar"><button type="submit" class="btn">🔎 Explorar datas</button><button type="button" id="export" class="btn secondary">↓ Exportar CSV</button><span class="hint">As datas são sugestões, não voos nem preços confirmados.</span></div>
+  <div class="action-bar"><button type="submit" class="btn">🔎 Encontrar datas</button><button type="button" id="export" class="btn secondary">↓ Exportar CSV</button><span class="hint">As datas são sugestões, não voos nem preços confirmados.</span></div>
   </form>
  </section>
  <div id="stats" class="stats" aria-live="polite"></div>
+ <section class="panel compare-section" aria-labelledby="prices-title">
+  <h2 id="prices-title">💶 Preços dos voos — comparação familiar</h2>
+  <p>Abre o <b>Skyscanner — mais barato</b> em cada data para consultar tarifas reais. Introduz aqui o preço total de ida e volta para os 4 passageiros; a aplicação guarda-o neste telemóvel e permite ordenar os preços que registaste.</p>
+  <p><b>Não existe pesquisa automática de preços nesta versão.</b> Os preços não são obtidos nem verificados pela aplicação e podem mudar.</p>
+  <div id="price-summary" class="price-note" aria-live="polite">Ainda não há preços registados.</div>
+  <div class="compare-actions"><label for="sortResults"><b>Ordenar opções:</b></label><select id="sortResults"><option value="dates">Por datas recomendadas</option><option value="price">Pelos preços introduzidos (mais baratos primeiro)</option></select><button type="button" id="clearPrices" class="btn secondary">Limpar preços guardados</button></div>
+ </section>
  <section class="results" aria-labelledby="results-title"><div class="results-top"><div><h2 id="results-title">Combinações possíveis</h2><p class="sub" id="result-message"></p></div><button type="button" id="more" class="btn outline" hidden>Mostrar mais datas</button></div><div id="cards" class="cards"></div></section>
- <div class="notice"><span aria-hidden="true">ℹ️</span><div><b>Importante:</b> o voo de regresso Recife → Lisboa chega muitas vezes no dia seguinte. A aplicação reserva pelo menos um dia para essa chegada, mas é indispensável confirmar o horário final, as escalas, a bagagem e o calendário concreto da escola antes de comprar. As plataformas externas podem exigir que confirmes os passageiros e o filtro de voos diretos.</div></div>
+ <div class="notice"><span aria-hidden="true">ℹ️</span><div><b>Importante:</b> o voo de regresso Recife → Lisboa chega muitas vezes no dia seguinte. A aplicação reserva pelo menos um dia para essa chegada, mas é indispensável confirmar o horário final, as escalas, a bagagem e o calendário concreto da escola antes de comprar. As plataformas externas podem exigir que confirmes os passageiros e os filtros. O preço introduzido é uma anotação tua, não uma cotação automática.</div></div>
  <footer class="footer"><p><b>Fonte escolar:</b> <a href="https://diariodarepublica.pt/dr/detalhe/despacho/8368-2024-873447631" target="_blank" rel="noopener">Despacho n.º 8368/2024, Diário da República</a>, com as alterações posteriores. Escolas com organização semestral ou ajustamentos locais podem ter datas diferentes.</p><p>Férias de verão de 2028: por prudência, a pesquisa termina em agosto, porque o calendário de início de 2028/2029 ainda não está incluído nesta aplicação. Não apresentamos preços simulados nem garantimos disponibilidade.</p></footer>
 </main>
 <script>
@@ -100,25 +108,63 @@ function fmt(x){return new Intl.DateTimeFormat('pt-PT',{day:'2-digit',month:'sho
 function wd(x){return new Intl.DateTimeFormat('pt-PT',{weekday:'long'}).format(x)}
 function weekday(x){var w=x.getDay();return w>=1 && w<=5}
 function value(id){return $(id).value}
-function querySkyscanner(r){var s=function(x){return iso(x).slice(2).replace(/-/g,'')};var url='https://www.skyscanner.pt/transporte/voos/lis/rec/'+s(r.out)+'/'+s(r.back)+'/?adultsv2=3&childrenv2='+encodeURIComponent(value('age'))+'&cabinclass=economy&rtn=1';return url}
+function querySkyscanner(r){
+ var q=new URLSearchParams({origin:'LIS',destination:'REC',outboundDate:iso(r.out),inboundDate:iso(r.back),adultsv2:'3',childrenv2:value('age'),cabinclass:'economy',sortby:'cheapest',currency:'EUR',market:'PT',locale:'pt-PT'});
+ if(value('direct')==='true')q.set('preferDirects','true');
+ return 'https://www.skyscanner.net/g/referrals/v1/flights/day-view/?'+q.toString();
+}
+function querySkyscannerMonth(r){
+ var q=new URLSearchParams({origin:'LIS',destination:'REC',oym:iso(r.out).slice(0,7),iym:iso(r.back).slice(0,7),selectedoday:String(r.out.getDate()),selectediday:String(r.back.getDate()),adultsv2:'3',childrenv2:value('age'),rtn:'1',currency:'EUR',market:'PT',locale:'pt-PT'});
+ if(value('direct')==='true')q.set('preferDirects','true');
+ return 'https://www.skyscanner.net/g/referrals/v1/flights/calendar-month-view/?'+q.toString();
+}
 function queryGoogle(r){var text='Voos ida e volta LIS REC partida '+iso(r.out)+' regresso '+iso(r.back)+' para 3 adultos e 1 criança com '+value('age')+' anos';return 'https://www.google.com/travel/flights?hl=pt-PT&q='+encodeURIComponent(text)}
 function getPeriods(){var year=value('year'), grade=value('grade'), months=YEAR[year].map(function(x){return Object.assign({},x)});var summer=SUMMER[year];months.push({id:'verao',name:'Verão',start:summer[grade],end:summer.end,official:'Início após o fim das aulas; fim conservador para evitar faltas.'});return months.filter(function(x){return value('holiday')==='all'||x.id===value('holiday')})}
 function check(){var min=Number(value('minDays')),max=Number(value('maxDays')),age=Number(value('age'));if(!Number.isInteger(min)||!Number.isInteger(max)||min<3||max>10||max<min){alert('Seleciona uma duração válida entre 3 e 10 dias (máximo ≥ mínimo).');return false}if(!Number.isInteger(age)||age<2||age>17){alert('A idade da criança deve estar entre 2 e 17 anos.');return false}return true}
 function makeRows(){rows=[];var daysMin=Number(value('minDays')),daysMax=Number(value('maxDays')),buffer=Number(value('buffer')),choice=value('daypref');var today=d(iso(new Date()));getPeriods().forEach(function(p){var from=d(p.start),to=d(p.end);for(var depart=new Date(from.getTime());depart<=to;depart=add(depart,1)){if(depart<today)continue;for(var nights=daysMin;nights<=daysMax;nights++){var back=add(depart,nights);if(add(back,buffer)>to)continue;if(choice==='midweek'&&(!weekday(depart)||!weekday(back)))continue;if(choice==='weekend'&&![0,6].includes(depart.getDay()))continue;var mid=(weekday(depart)&&weekday(back))?0:1;rows.push({out:depart,back:back,days:nights,period:p,score:mid*50+Math.abs(nights-8)*2+((depart.getDay()===2||depart.getDay()===3)?0:1)})}}});rows.sort(function(a,b){return a.score-b.score||a.out-b.out||a.days-b.days})}
-function card(r,i){var best=i<3;var el=document.createElement('article');el.className='card';
- el.innerHTML='<div class="card-top"><div><strong>'+r.period.name+' · '+r.days+' dias</strong><div class="meta">'+r.period.official+'</div></div><span class="chip">'+(best?'Boa data a comparar':'Datas compatíveis')+'</span></div>'+
+function priceKey(r){return iso(r.out)+'_'+iso(r.back)+'_'+value('age')+'_'+value('direct')}
+var prices={};try{prices=JSON.parse(localStorage.getItem('lrx_prices_v1')||'{}')||{}}catch(e){prices={}}
+function getPrice(r){var p=prices[priceKey(r)];return p&&Number.isFinite(Number(p.amount))&&Number(p.amount)>0?Number(p.amount):null}
+function money(n){return new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(n)}
+function card(r,i){
+ var amount=getPrice(r),key=priceKey(r),el=document.createElement('article');el.className='card';
+ el.innerHTML='<div class="card-top"><div><strong>'+r.period.name+' · '+r.days+' dias</strong><div class="meta">'+r.period.official+'</div></div><span class="chip">'+(amount!==null?'Preço anotado: '+money(amount):'Consultar preço')+'</span></div>'+
  '<div class="timeline"><div class="point"><small>IDA · Lisboa</small><b>'+fmt(r.out)+'</b><small>'+wd(r.out)+'</small></div><div class="arrow" aria-hidden="true">➜</div><div class="point"><small>VOLTA · Recife</small><b>'+fmt(r.back)+'</b><small>'+wd(r.back)+'</small></div></div>'+
- '<div class="card-buttons"><a class="btn" href="'+querySkyscanner(r)+'" target="_blank" rel="noopener noreferrer">Skyscanner ↗</a><a class="btn secondary" href="'+queryGoogle(r)+'" target="_blank" rel="noopener noreferrer">Google Flights ↗</a></div>';
- return el}
-function render(){var cards=$('cards');cards.replaceChildren();var list=rows.slice(0,visible);list.forEach(function(r,i){cards.appendChild(card(r,i))});$('more').hidden=rows.length<=visible;var holidays=Array.from(new Set(rows.map(function(r){return r.period.name}))).length;$('stats').innerHTML='<div class="stat"><b>'+rows.length+'</b><span>combinações de datas</span></div><div class="stat"><b>'+holidays+'</b><span>períodos com opções</span></div><div class="stat"><b>3 + 1</b><span>adultos + criança</span></div>';
- $('result-message').textContent=rows.length?'A mostrar '+list.length+' de '+rows.length+' opções. Datas ordenadas para facilitar a comparação; não por preço.':'Sem datas compatíveis com estes filtros.';
+ '<div class="card-buttons"><a class="btn" href="'+querySkyscanner(r)+'" target="_blank" rel="noopener noreferrer">Ver preços mais baratos ↗</a><a class="btn secondary" href="'+querySkyscannerMonth(r)+'" target="_blank" rel="noopener noreferrer">Preços do mês ↗</a><a class="btn secondary" href="'+queryGoogle(r)+'" target="_blank" rel="noopener noreferrer">Google Flights ↗</a></div>'+
+ '<div class="price-register"><label for="price-'+key+'">Preço total visto no site (€) — 3 adultos + 1 criança, ida e volta</label><div class="price-actions"><input id="price-'+key+'" type="number" min="1" max="100000" step="0.01" inputmode="decimal" placeholder="Ex.: 2900" value="'+(amount===null?'':amount)+'" aria-label="Preço familiar total em euros"><button type="button" class="btn secondary" data-save="'+key+'">Guardar preço</button></div><small>Valor guardado apenas neste dispositivo, sem verificação automática. Confirma sempre a tarifa final.</small></div>';
+ return el;
+}
+function render(){
+ var list=rows.slice();if(value('sortResults')==='price'){list.sort(function(a,b){var pa=getPrice(a),pb=getPrice(b);return (pa===null?Infinity:pa)-(pb===null?Infinity:pb)||a.out-b.out})}
+ var cards=$('cards');cards.replaceChildren();list.slice(0,visible).forEach(function(r,i){cards.appendChild(card(r,i))});
+ $('more').hidden=list.length<=visible;
+ var holidays=Array.from(new Set(rows.map(function(r){return r.period.name}))).length;
+ $('stats').innerHTML='<div class="stat"><b>'+rows.length+'</b><span>combinações de datas</span></div><div class="stat"><b>'+holidays+'</b><span>períodos com opções</span></div><div class="stat"><b>3 + 1</b><span>adultos + criança</span></div>';
+ var entered=rows.map(function(r){return {r:r,p:getPrice(r)}}).filter(function(x){return x.p!==null}).sort(function(a,b){return a.p-b.p});
+ $('price-summary').textContent=entered.length?'Melhor preço inserido: '+money(entered[0].p)+' para ida '+fmt(entered[0].r.out)+' e volta '+fmt(entered[0].r.back)+' · '+entered.length+' combinações com preço registado.':'Ainda sem preços: abre o Skyscanner numa das datas e regista aqui o total dos quatro passageiros.';
+ $('result-message').textContent=rows.length?'A mostrar '+Math.min(visible,list.length)+' de '+rows.length+' combinações. '+(value('sortResults')==='price'?'Preços anotados primeiro; opções sem preço no fim.':'Datas ordenadas por conveniência, não pelo preço.'):'Sem datas compatíveis com estes filtros.';
  if(!rows.length){var box=document.createElement('div');box.className='empty';box.innerHTML='<h3>Nenhuma combinação encontrada</h3><p>Experimenta outra pausa escolar, diminui o mínimo de dias ou reduz a margem de regresso. O Carnaval é curto para uma viagem intercontinental.</p>';cards.appendChild(box)}
 }
-function save(){try{var o={};['year','holiday','grade','age','minDays','maxDays','buffer','daypref'].forEach(function(k){o[k]=value(k)});localStorage.setItem('lrx_filters',JSON.stringify(o))}catch(e){}}
+function save(){try{var o={};['year','holiday','grade','age','minDays','maxDays','buffer','daypref','direct'].forEach(function(k){o[k]=value(k)});localStorage.setItem('lrx_filters',JSON.stringify(o))}catch(e){}}
 function restore(){try{var o=JSON.parse(localStorage.getItem('lrx_filters')||'{}');Object.keys(o).forEach(function(k){var e=$(k);if(e && Array.from(e.options||[]).some(function(opt){return opt.value===String(o[k])}) || e && e.tagName==='INPUT'){e.value=o[k]}})}catch(e){}}
 function search(){if(!check())return;visible=8;makeRows();render();save()}
-function csv(){if(!rows.length){alert('Não há datas para exportar.');return}var lines=[['Férias','Partida LIS','Volta REC','Dias','Chegada a Lisboa estimada','Observações'].join(';')];rows.forEach(function(r){lines.push([r.period.name,iso(r.out),iso(r.back),r.days,iso(add(r.back,1)),'"Confirmar horários e preços nos sites externos"'].join(';'))});var blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='datas-lisboa-recife.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},500)}
+function csv(){
+ if(!rows.length){alert('Não há datas para exportar.');return}
+ var lines=[['Férias','Partida LIS','Volta REC','Dias','Chegada a Lisboa estimada','Preço familiar inserido EUR','Observações'].join(';')];
+ rows.forEach(function(r){lines.push([r.period.name,iso(r.out),iso(r.back),r.days,iso(add(r.back,1)),getPrice(r)===null?'':getPrice(r),'"Preço anotado pelo utilizador; confirmar disponibilidade"'].join(';'))});
+ var blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='comparacao-precos-lisboa-recife.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},500)
+}
 $('form').addEventListener('submit',function(e){e.preventDefault();search()});$('more').addEventListener('click',function(){visible+=8;render()});$('export').addEventListener('click',csv);
+$('sortResults').addEventListener('change',function(){visible=8;render()});
+$('cards').addEventListener('click',function(e){
+ var button=e.target.closest('button[data-save]');if(!button)return;
+ var key=button.getAttribute('data-save'),input=$('price-'+key),amount=Number(input.value);
+ if(!Number.isFinite(amount)||amount<=0||amount>100000){alert('Introduz um preço total válido em euros para os quatro passageiros.');return}
+ prices[key]={amount:Math.round(amount*100)/100,recordedAt:new Date().toISOString()};
+ try{localStorage.setItem('lrx_prices_v1',JSON.stringify(prices))}catch(err){alert('Não foi possível guardar no telemóvel.')}
+ render();
+});
+$('clearPrices').addEventListener('click',function(){if(!confirm('Apagar todos os preços que registaste neste telemóvel?'))return;prices={};try{localStorage.removeItem('lrx_prices_v1')}catch(e){}render()});
 restore();search();
 })();
 </script>
