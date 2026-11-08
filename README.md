@@ -1,38 +1,29 @@
-# ✈️ Voos Lisboa ↔ Recife · Férias Escolares
+# ✈️ Lisboa ↔ Recife · Férias Escolares
 
-Aplicação Streamlit em português de Portugal para procurar datas de ida e volta (até 10 dias) para **3 adultos e 1 criança**.
+## Versão recomendada: HTML (sem instalação)
 
-## Funcionalidades
+A versão móvel é o ficheiro **`index.html`**, feito apenas com HTML, CSS e JavaScript. Funciona num navegador sem servidor Python.
 
-- Calendário nacional de férias escolares 2026/2027 e 2027/2028, adaptado ao ciclo/ano de escolaridade.
-- Comparação de combinações de datas e margem para chegada a Portugal após o voo noturno.
-- Links de pesquisa no Skyscanner; Google Flights abre para configuração manual.
-- Importação de preços reais em CSV, com cálculo do preço total da família.
-- Consulta opcional da API Skyscanner Flights Live Prices (requer aprovação como parceiro).
-- Exportação das combinações de viagem em CSV.
+### Publicar gratuitamente no GitHub Pages
 
-**Importante:** nenhum preço simulado é apresentado como tarifa disponível. O verão de 2028 está marcado como provisório. Os calendários locais e os horários efetivos dos voos devem ser confirmados antes de reservar.
+1. Abrir **https://github.com/Fdorotea1/voos-recife-ferias/settings/pages**.
+2. Em **Build and deployment → Source**, escolher **Deploy from a branch**.
+3. Em **Branch**, escolher **main** e **/(root)** e carregar em **Save**.
+4. Quando a publicação terminar, abrir **https://fdorotea1.github.io/voos-recife-ferias/** no telemóvel.
+5. No navegador, usar a opção **Adicionar ao ecrã principal** para guardar o atalho.
 
-## Publicar no Streamlit Community Cloud
+A aplicação calcula combinações de datas nas férias escolares de 2026/2027 e 2027/2028, respeitando os diferentes anos de escolaridade, a duração máxima de 10 dias e uma margem de regresso antes das aulas. Permite comparar datas no Skyscanner e Google Flights e exportar CSV.
 
-1. Abrir https://share.streamlit.io/ e autenticar com GitHub.
-2. Selecionar **New app** / **Deploy a public app from GitHub**.
-3. Escolher o repositório `Fdorotea1/voos-recife-ferias`, a branch `main` e o caminho `app.py`.
-4. Clicar **Deploy**.
+**Não apresenta preços simulados.** As datas e filtros do Skyscanner e Google Flights devem ser confirmados após abrir as ligações. As escolas podem ter um calendário local ou semestral diferente.
 
-O ficheiro `requirements.txt` define as dependências; não é preciso instalar Python no telemóvel.
+Fonte oficial: https://diariodarepublica.pt/dr/detalhe/despacho/8368-2024-873447631 (e alterações posteriores).
 
-## API opcional
+---
 
-Se tiveres credenciais de parceiro, adiciona `SKYSCANNER_API_KEY` aos **Secrets** nas definições da aplicação do Streamlit. Nunca publiques chaves no GitHub.
+## Versão anterior: Streamlit
 
-## CSV de orçamentos
+A versão Python mantém-se disponível nos ficheiros `app.py` e `requirements.txt`.
 
-Aceita cabeçalhos:
+Para a publicar, é necessário usar **https://share.streamlit.io/**, escolher este repositório, a branch `main` e o ficheiro `app.py`. A integração opcional com preços através da API Skyscanner requer credenciais de parceiro guardadas nos segredos do Streamlit, nunca no GitHub.
 
-```csv
-ida,volta,companhia,tipo,preco_adulto_eur,preco_crianca_eur
-2027-03-23,2027-04-01,Exemplo,Direto,850,690
-```
-
-ou `preco_total_eur` no lugar dos dois preços individuais. Estes valores são ilustrativos.
+**Recomendação:** para utilização familiar no telemóvel e comparação manual de preços, utilizar a versão HTML.
