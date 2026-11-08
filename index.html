@@ -52,15 +52,15 @@ h1{font-size:clamp(2rem,5vw,3.8rem);line-height:1.12;max-width:760px;margin:12px
 </header>
 <main class="wrap">
  <section class="panel" aria-labelledby="params-title">
-  <div class="section-head"><div><h2 id="params-title">Planeia a viagem</h2><p>Seleciona o calendário escolar e a duração pretendida.</p></div><span class="pill">3 adultos + 1 criança</span></div>
+  <div class="section-head"><div><h2 id="params-title">Planeia a viagem</h2><p>Seleciona o calendário escolar e a duração pretendida — entre 3 e 30 dias, conforme a pausa letiva.</p></div><span class="pill">3 adultos + 1 criança</span></div>
   <form id="form">
   <div class="form-grid">
    <div class="field"><label for="year">Ano letivo</label><select id="year"><option value="2627">2026 / 2027</option><option value="2728">2027 / 2028</option></select></div>
    <div class="field"><label for="holiday">Férias</label><select id="holiday"><option value="all">Todas as férias</option><option value="natal">Natal</option><option value="carnaval">Carnaval</option><option value="pascoa">Páscoa</option><option value="verao">Verão</option></select></div>
    <div class="field"><label for="grade">Ano de escolaridade</label><select id="grade"><option value="pre">Pré-escolar / 1.º ciclo</option><option value="middle">5.º–8.º ou 10.º ano</option><option value="exam">9.º, 11.º ou 12.º ano</option></select></div>
    <div class="field"><label for="age">Idade da criança</label><input id="age" type="number" min="2" max="17" value="7" inputmode="numeric"><div class="help">Confirma a idade à data da viagem.</div></div>
-   <div class="field"><label for="minDays">Mínimo de dias</label><input id="minDays" type="number" min="3" max="10" value="6" inputmode="numeric"></div>
-   <div class="field"><label for="maxDays">Máximo de dias</label><input id="maxDays" type="number" min="3" max="10" value="10" inputmode="numeric"></div>
+   <div class="field"><label for="minDays">Mínimo de dias</label><input id="minDays" type="number" min="3" max="30" value="6" inputmode="numeric"></div>
+   <div class="field"><label for="maxDays">Máximo de dias</label><input id="maxDays" type="number" min="3" max="30" value="10" inputmode="numeric"></div>
    <div class="field"><label for="buffer">Margem antes das aulas</label><select id="buffer"><option value="1">1 dia para chegar</option><option value="2">2 dias de segurança</option><option value="3">3 dias de segurança</option></select></div>
    <div class="field"><label for="daypref">Preferência de dias</label><select id="daypref"><option value="all">Qualquer dia</option><option value="midweek">Ida e volta em dias úteis</option><option value="weekend">Partida ao fim de semana</option></select></div>
    <div class="field"><label for="direct">Escalas</label><select id="direct"><option value="all">Diretos e com escala</option><option value="true">Apenas voos diretos</option></select></div>
@@ -74,7 +74,7 @@ h1{font-size:clamp(2rem,5vw,3.8rem);line-height:1.12;max-width:760px;margin:12px
   <p>Abre o <b>Skyscanner — mais barato</b> em cada data para consultar tarifas reais. Introduz aqui o preço total de ida e volta para os 4 passageiros; a aplicação guarda-o neste telemóvel e permite ordenar os preços que registaste.</p>
   <p><b>Não existe pesquisa automática de preços nesta versão.</b> Os preços não são obtidos nem verificados pela aplicação e podem mudar.</p>
   <div id="price-summary" class="price-note" aria-live="polite">Ainda não há preços registados.</div>
-  <div class="compare-actions"><label for="sortResults"><b>Ordenar opções:</b></label><select id="sortResults"><option value="dates">Por datas recomendadas</option><option value="price">Pelos preços introduzidos (mais baratos primeiro)</option></select><button type="button" id="clearPrices" class="btn secondary">Limpar preços guardados</button></div>
+  <div class="compare-actions"><label for="sortResults"><b>Ordenar opções:</b></label><select id="sortResults"><option value="dates">Por datas recomendadas</option><option value="long">Estadias mais longas primeiro</option><option value="short">Estadias mais curtas primeiro</option><option value="price">Pelos preços introduzidos (mais baratos primeiro)</option></select><button type="button" id="clearPrices" class="btn secondary">Limpar preços guardados</button></div>
  </section>
  <section class="results" aria-labelledby="results-title"><div class="results-top"><div><h2 id="results-title">Combinações possíveis</h2><p class="sub" id="result-message"></p></div><button type="button" id="more" class="btn outline" hidden>Mostrar mais datas</button></div><div id="cards" class="cards"></div></section>
  <div class="notice"><span aria-hidden="true">ℹ️</span><div><b>Importante:</b> o voo de regresso Recife → Lisboa chega muitas vezes no dia seguinte. A aplicação reserva pelo menos um dia para essa chegada, mas é indispensável confirmar o horário final, as escalas, a bagagem e o calendário concreto da escola antes de comprar. As plataformas externas podem exigir que confirmes os passageiros e os filtros. O preço introduzido é uma anotação tua, não uma cotação automática.</div></div>
@@ -120,7 +120,7 @@ function querySkyscannerMonth(r){
 }
 function queryGoogle(r){var text='Voos ida e volta LIS REC partida '+iso(r.out)+' regresso '+iso(r.back)+' para 3 adultos e 1 criança com '+value('age')+' anos';return 'https://www.google.com/travel/flights?hl=pt-PT&q='+encodeURIComponent(text)}
 function getPeriods(){var year=value('year'), grade=value('grade'), months=YEAR[year].map(function(x){return Object.assign({},x)});var summer=SUMMER[year];months.push({id:'verao',name:'Verão',start:summer[grade],end:summer.end,official:'Início após o fim das aulas; fim conservador para evitar faltas.'});return months.filter(function(x){return value('holiday')==='all'||x.id===value('holiday')})}
-function check(){var min=Number(value('minDays')),max=Number(value('maxDays')),age=Number(value('age'));if(!Number.isInteger(min)||!Number.isInteger(max)||min<3||max>10||max<min){alert('Seleciona uma duração válida entre 3 e 10 dias (máximo ≥ mínimo).');return false}if(!Number.isInteger(age)||age<2||age>17){alert('A idade da criança deve estar entre 2 e 17 anos.');return false}return true}
+function check(){var min=Number(value('minDays')),max=Number(value('maxDays')),age=Number(value('age'));if(!Number.isInteger(min)||!Number.isInteger(max)||min<3||max>30||max<min){alert('Seleciona uma duração válida entre 3 e 30 dias (máximo ≥ mínimo).');return false}if(!Number.isInteger(age)||age<2||age>17){alert('A idade da criança deve estar entre 2 e 17 anos.');return false}return true}
 function makeRows(){rows=[];var daysMin=Number(value('minDays')),daysMax=Number(value('maxDays')),buffer=Number(value('buffer')),choice=value('daypref');var today=d(iso(new Date()));getPeriods().forEach(function(p){var from=d(p.start),to=d(p.end);for(var depart=new Date(from.getTime());depart<=to;depart=add(depart,1)){if(depart<today)continue;for(var nights=daysMin;nights<=daysMax;nights++){var back=add(depart,nights);if(add(back,buffer)>to)continue;if(choice==='midweek'&&(!weekday(depart)||!weekday(back)))continue;if(choice==='weekend'&&![0,6].includes(depart.getDay()))continue;var mid=(weekday(depart)&&weekday(back))?0:1;rows.push({out:depart,back:back,days:nights,period:p,score:mid*50+Math.abs(nights-8)*2+((depart.getDay()===2||depart.getDay()===3)?0:1)})}}});rows.sort(function(a,b){return a.score-b.score||a.out-b.out||a.days-b.days})}
 function priceKey(r){return iso(r.out)+'_'+iso(r.back)+'_'+value('age')+'_'+value('direct')}
 var prices={};try{prices=JSON.parse(localStorage.getItem('lrx_prices_v1')||'{}')||{}}catch(e){prices={}}
@@ -135,14 +135,14 @@ function card(r,i){
  return el;
 }
 function render(){
- var list=rows.slice();if(value('sortResults')==='price'){list.sort(function(a,b){var pa=getPrice(a),pb=getPrice(b);return (pa===null?Infinity:pa)-(pb===null?Infinity:pb)||a.out-b.out})}
+ var list=rows.slice();if(value('sortResults')==='price'){list.sort(function(a,b){var pa=getPrice(a),pb=getPrice(b);return (pa===null?Infinity:pa)-(pb===null?Infinity:pb)||a.out-b.out})}else if(value('sortResults')==='long'){list.sort(function(a,b){return b.days-a.days||a.out-b.out})}else if(value('sortResults')==='short'){list.sort(function(a,b){return a.days-b.days||a.out-b.out})}
  var cards=$('cards');cards.replaceChildren();list.slice(0,visible).forEach(function(r,i){cards.appendChild(card(r,i))});
  $('more').hidden=list.length<=visible;
  var holidays=Array.from(new Set(rows.map(function(r){return r.period.name}))).length;
  $('stats').innerHTML='<div class="stat"><b>'+rows.length+'</b><span>combinações de datas</span></div><div class="stat"><b>'+holidays+'</b><span>períodos com opções</span></div><div class="stat"><b>3 + 1</b><span>adultos + criança</span></div>';
  var entered=rows.map(function(r){return {r:r,p:getPrice(r)}}).filter(function(x){return x.p!==null}).sort(function(a,b){return a.p-b.p});
  $('price-summary').textContent=entered.length?'Melhor preço inserido: '+money(entered[0].p)+' para ida '+fmt(entered[0].r.out)+' e volta '+fmt(entered[0].r.back)+' · '+entered.length+' combinações com preço registado.':'Ainda sem preços: abre o Skyscanner numa das datas e regista aqui o total dos quatro passageiros.';
- $('result-message').textContent=rows.length?'A mostrar '+Math.min(visible,list.length)+' de '+rows.length+' combinações. '+(value('sortResults')==='price'?'Preços anotados primeiro; opções sem preço no fim.':'Datas ordenadas por conveniência, não pelo preço.'):'Sem datas compatíveis com estes filtros.';
+ $('result-message').textContent=rows.length?'A mostrar '+Math.min(visible,list.length)+' de '+rows.length+' combinações. '+(value('sortResults')==='price'?'Preços anotados primeiro; opções sem preço no fim.':value('sortResults')==='long'?'Estadias mais longas primeiro.':value('sortResults')==='short'?'Estadias mais curtas primeiro.':'Datas ordenadas por conveniência, não pelo preço.'):'Sem datas compatíveis com estes filtros.';
  if(!rows.length){var box=document.createElement('div');box.className='empty';box.innerHTML='<h3>Nenhuma combinação encontrada</h3><p>Experimenta outra pausa escolar, diminui o mínimo de dias ou reduz a margem de regresso. O Carnaval é curto para uma viagem intercontinental.</p>';cards.appendChild(box)}
 }
 function save(){try{var o={};['year','holiday','grade','age','minDays','maxDays','buffer','daypref','direct'].forEach(function(k){o[k]=value(k)});localStorage.setItem('lrx_filters',JSON.stringify(o))}catch(e){}}
