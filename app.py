@@ -204,7 +204,7 @@ with st.sidebar:
     modo = st.radio("Tipo de pesquisa", ["Férias escolares", "Datas livres"])
     idade = st.number_input("Idade da criança", min_value=2, max_value=17, value=7, step=1)
     diretos = st.checkbox("Apenas voos diretos", value=False)
-    dur_min, dur_max = st.slider("Dias entre ida e volta", 3, 10, (6, 10))
+    dur_min, dur_max = st.slider("Dias entre ida e volta", 3, 30, (6, 10))
     if modo == "Férias escolares":
         nivel = st.selectbox("Ciclo/ano escolar", NIVEIS)
         nomes = st.multiselect("Pausas escolares", ["Natal", "Carnaval", "Páscoa", "Verão"],
@@ -233,7 +233,7 @@ st.caption("Sem preços inventados: esta aplicação apresenta datas possíveis 
 c1, c2, c3 = st.columns(3)
 c1.metric("Passageiros", "3 adultos + 1 criança")
 c2.metric("Combinações", len(df))
-c3.metric("Estadia máxima", "10 dias")
+c3.metric("Estadia máxima selecionada", f"{dur_max} dias")
 
 if modo == "Férias escolares":
     st.subheader("📚 Férias escolares em Portugal continental")
