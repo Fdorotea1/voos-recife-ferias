@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a213b">
+<meta name="description" content="Explore datas para voos Lisboa–Recife em férias escolares portuguesas, com ligações para preços reais.">
+<title>Voos Lisboa ↔ Recife | Férias Escolares</title>
+<style>
+:root{--navy:#0a213b;--navy2:#113658;--sky:#eaf6fc;--teal:#007f81;--teal-dark:#005e64;--coral:#e77a4b;--ink:#122b3d;--muted:#5b7180;--line:#dce7eb;--bg:#f3f8fa;--white:#fff;--shadow:0 14px 36px rgba(21,61,90,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--bg);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;line-height:1.5}
+button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}
+.header{background:linear-gradient(125deg,#09223e 0%,#12496b 75%,#176b79);color:white;padding:20px clamp(18px,5vw,60px) 82px;overflow:hidden;position:relative}
+.header:after{content:"";position:absolute;width:300px;height:300px;border:54px solid rgba(255,255,255,.05);border-radius:50%;right:-60px;top:10px;pointer-events:none}
+.nav{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px;position:relative;z-index:1}
+.brand{display:flex;gap:12px;align-items:center;font-size:.94rem;font-weight:800;letter-spacing:.02em}.brand i{display:grid;place-items:center;width:42px;height:42px;background:#ffffff20;border:1px solid #ffffff36;border-radius:14px;font-size:1.25rem;font-style:normal}
+.badge{background:#d9fcf6;color:#075b5d;font-size:.76rem;font-weight:800;padding:8px 12px;border-radius:999px;text-align:center}
+.hero{max-width:1100px;margin:48px auto 0;position:relative;z-index:1;max-width:1100px}
+.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.75rem;color:#9dd8dc;font-weight:900}
+h1{font-size:clamp(2rem,5vw,3.8rem);line-height:1.12;max-width:760px;margin:12px 0 15px;letter-spacing:-.045em}h1 em{font-style:normal;color:#aee6e3}
+.hero p{max-width:670px;color:#d4e6ef;font-size:1rem;margin:0}
+.route{display:inline-flex;gap:12px;align-items:center;margin-top:25px;border:1px solid #ffffff40;background:#ffffff18;border-radius:999px;padding:10px 17px;font-weight:800;letter-spacing:.06em}.route small{font-size:.72rem;color:#cfe4e9;letter-spacing:0}
+.wrap{max-width:1100px;margin:-49px auto 70px;padding:0 20px;position:relative;z-index:2}
+.panel{background:white;border-radius:22px;padding:clamp(19px,3vw,32px);box-shadow:var(--shadow);border:1px solid #e5eff2}
+.section-head{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.section-head h2,.results h2{font-size:1.36rem;margin:0;letter-spacing:-.025em}.section-head p,.sub{color:var(--muted);margin:5px 0 0;font-size:.9rem}
+.pill{white-space:nowrap;border-radius:999px;background:#e9f7f5;padding:7px 11px;font-size:.75rem;color:#006e69;font-weight:800}
+.form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.field{min-width:0}.field label{display:block;font-size:.8rem;font-weight:800;margin:0 0 7px}.field input,.field select{width:100%;border:1px solid #cbdae2;background:#fff;border-radius:12px;padding:12px 12px;color:var(--ink);min-height:48px;outline-offset:3px}.field input:focus,.field select:focus{outline:2px solid #6abcc0;border-color:transparent}
+.help{font-size:.75rem;color:var(--muted);margin-top:5px}
+.action-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:22px;margin-top:18px;border-top:1px solid var(--line)}
+.btn{border:0;background:var(--teal);color:white;font-weight:800;border-radius:12px;padding:12px 17px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:45px;transition:transform .12s,background .12s}.btn:hover{background:var(--teal-dark);transform:translateY(-1px)}.btn.secondary{background:#e9f3f6;color:#123c51}.btn.secondary:hover{background:#d7edf1}.btn.outline{background:white;color:var(--teal-dark);border:1px solid #c6dddd}.hint{font-size:.82rem;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:19px 0 30px}.stat{padding:18px 20px;background:#eaf3f6;border:1px solid #dce9ed;border-radius:17px}.stat b{display:block;font-size:1.55rem;line-height:1.2;color:var(--navy)}.stat span{font-size:.8rem;color:var(--muted);font-weight:700}
+.results{padding:6px 1px}.results-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:17px;flex-wrap:wrap}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.card{background:white;border:1px solid #dfeaed;box-shadow:0 5px 16px #123c5109;border-radius:18px;padding:21px}
+.card-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.card strong{font-size:1.07rem}.card .meta{font-size:.78rem;color:var(--muted);font-weight:750}.chip{font-size:.72rem;font-weight:850;color:#166b62;background:#e7f7ef;border-radius:999px;padding:5px 9px;white-space:nowrap}
+.timeline{display:flex;align-items:center;gap:10px;margin:19px 0 16px}.point{flex:1;min-width:0}.point b{font-size:1.2rem;display:block;line-height:1.25}.point small{font-size:.75rem;color:var(--muted)}.arrow{display:flex;align-items:center;justify-content:center;gap:4px;color:var(--teal);font-size:1.05rem;flex:0 0 38px}.arrow:before,.arrow:after{content:"";height:1px;background:#a2d1d2;flex:1;min-width:7px}
+.card-buttons{display:flex;gap:8px;flex-wrap:wrap}.card-buttons .btn{flex:1;font-size:.85rem;padding:11px 9px}
+.notice{display:flex;gap:11px;align-items:flex-start;background:#fff8ed;border-left:4px solid #dc9a42;border-radius:10px;padding:14px 17px;color:#6c4c1e;font-size:.88rem;margin:22px 0}.notice b{color:#493412}
+.empty{padding:28px 20px;background:white;text-align:center;border:1px dashed #bfd0d8;border-radius:17px}.empty h3{margin:0 0 6px}.empty p{color:var(--muted);margin:0}
+.footer{border-top:1px solid var(--line);margin-top:35px;padding:23px 2px;color:var(--muted);font-size:.8rem}.footer a{text-decoration:underline}.footer p{margin:8px 0}
+.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:850px){.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.header{padding-bottom:70px}.hero{margin-top:38px}.badge{font-size:.7rem}.wrap{margin-top:-38px}}
+@media(max-width:600px){.header{padding:17px 17px 68px}.hero{margin-top:32px}.hero p{font-size:.91rem}.nav{align-items:flex-start}.brand{font-size:.82rem}.badge{max-width:115px;line-height:1.3}.wrap{padding:0 12px}.panel{border-radius:17px;padding:18px}.section-head{display:block}.pill{display:inline-block;margin-top:10px}.form-grid{gap:13px}.field label{font-size:.75rem}.field select,.field input{font-size:.92rem;padding:10px 8px}.stats{grid-template-columns:repeat(3,1fr);gap:6px}.stat{padding:12px 8px}.stat b{font-size:1.15rem}.stat span{font-size:.69rem}.cards{grid-template-columns:1fr}.card{padding:18px}.results h2{font-size:1.2rem}.route{font-size:.8rem}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="nav"><div class="brand"><i aria-hidden="true">✈</i><span>VOOS · FÉRIAS ESCOLARES</span></div><span class="badge">100% sem preços fictícios</span></div>
+  <div class="hero"><div class="eyebrow">Planeador familiar de viagens</div><h1>De Lisboa para <em>Recife</em>, sem faltar às aulas.</h1><p>Descobre combinações de datas durante as férias escolares em Portugal continental. Depois, compara as tarifas reais nas plataformas de voos.</p><div class="route"><span>LIS</span><span aria-hidden="true">⇄</span><span>REC</span><small>· ida e volta</small></div></div>
+</header>
+<main class="wrap">
+ <section class="panel" aria-labelledby="params-title">
+  <div class="section-head"><div><h2 id="params-title">Planeia a viagem</h2><p>Seleciona o calendário escolar e a duração pretendida.</p></div><span class="pill">3 adultos + 1 criança</span></div>
+  <form id="form">
+  <div class="form-grid">
+   <div class="field"><label for="year">Ano letivo</label><select id="year"><option value="2627">2026 / 2027</option><option value="2728">2027 / 2028</option></select></div>
+   <div class="field"><label for="holiday">Férias</label><select id="holiday"><option value="all">Todas as férias</option><option value="natal">Natal</option><option value="carnaval">Carnaval</option><option value="pascoa">Páscoa</option><option value="verao">Verão</option></select></div>
+   <div class="field"><label for="grade">Ano de escolaridade</label><select id="grade"><option value="pre">Pré-escolar / 1.º ciclo</option><option value="middle">5.º–8.º ou 10.º ano</option><option value="exam">9.º, 11.º ou 12.º ano</option></select></div>
+   <div class="field"><label for="age">Idade da criança</label><input id="age" type="number" min="2" max="17" value="7" inputmode="numeric"><div class="help">Confirma a idade à data da viagem.</div></div>
+   <div class="field"><label for="minDays">Mínimo de dias</label><input id="minDays" type="number" min="3" max="10" value="6" inputmode="numeric"></div>
+   <div class="field"><label for="maxDays">Máximo de dias</label><input id="maxDays" type="number" min="3" max="10" value="10" inputmode="numeric"></div>
+   <div class="field"><label for="buffer">Margem antes das aulas</label><select id="buffer"><option value="1">1 dia para chegar</option><option value="2">2 dias de segurança</option><option value="3">3 dias de segurança</option></select></div>
+   <div class="field"><label for="daypref">Preferência de dias</label><select id="daypref"><option value="all">Qualquer dia</option><option value="midweek">Ida e volta em dias úteis</option><option value="weekend">Partida ao fim de semana</option></select></div>
+  </div>
+  <div class="action-bar"><button type="submit" class="btn">🔎 Explorar datas</button><button type="button" id="export" class="btn secondary">↓ Exportar CSV</button><span class="hint">As datas são sugestões, não voos nem preços confirmados.</span></div>
+  </form>
+ </section>
+ <div id="stats" class="stats" aria-live="polite"></div>
+ <section class="results" aria-labelledby="results-title"><div class="results-top"><div><h2 id="results-title">Combinações possíveis</h2><p class="sub" id="result-message"></p></div><button type="button" id="more" class="btn outline" hidden>Mostrar mais datas</button></div><div id="cards" class="cards"></div></section>
+ <div class="notice"><span aria-hidden="true">ℹ️</span><div><b>Importante:</b> o voo de regresso Recife → Lisboa chega muitas vezes no dia seguinte. A aplicação reserva pelo menos um dia para essa chegada, mas é indispensável confirmar o horário final, as escalas, a bagagem e o calendário concreto da escola antes de comprar. As plataformas externas podem exigir que confirmes os passageiros e o filtro de voos diretos.</div></div>
+ <footer class="footer"><p><b>Fonte escolar:</b> <a href="https://diariodarepublica.pt/dr/detalhe/despacho/8368-2024-873447631" target="_blank" rel="noopener">Despacho n.º 8368/2024, Diário da República</a>, com as alterações posteriores. Escolas com organização semestral ou ajustamentos locais podem ter datas diferentes.</p><p>Férias de verão de 2028: por prudência, a pesquisa termina em agosto, porque o calendário de início de 2028/2029 ainda não está incluído nesta aplicação. Não apresentamos preços simulados nem garantimos disponibilidade.</p></footer>
+</main>
+<script>
+(function(){
+'use strict';
+var YEAR = {
+  '2627':[
+    {id:'natal',name:'Natal',start:'2026-12-16',end:'2027-01-03',official:'Interrupção oficial: 16–31 dez. 2026; aulas a 4 jan.'},
+    {id:'carnaval',name:'Carnaval',start:'2027-02-08',end:'2027-02-10',official:'Interrupção oficial: 8–10 fev. 2027.'},
+    {id:'pascoa',name:'Páscoa',start:'2027-03-22',end:'2027-04-04',official:'Interrupção oficial: 22 mar.–2 abr. 2027; aulas a 5 abr.'}
+  ],
+  '2728':[
+    {id:'natal',name:'Natal',start:'2027-12-20',end:'2028-01-02',official:'Interrupção oficial: 20–31 dez. 2027; aulas a 3 jan.'},
+    {id:'carnaval',name:'Carnaval',start:'2028-02-28',end:'2028-03-01',official:'Interrupção oficial: 28 fev.–1 mar. 2028.'},
+    {id:'pascoa',name:'Páscoa',start:'2028-04-03',end:'2028-04-17',official:'Interrupção oficial: 3–17 abr. 2028; aulas a 18 abr.'}
+  ]
+};
+var SUMMER = {
+ '2627':{pre:'2027-07-01',middle:'2027-06-12',exam:'2027-06-05',end:'2027-09-12'},
+ '2728':{pre:'2028-07-01',middle:'2028-06-15',exam:'2028-06-08',end:'2028-08-31'}
+};
+var $ = function(id){return document.getElementById(id)};
+var rows=[], visible=8;
+function d(iso){var a=iso.split('-').map(Number);return new Date(a[0],a[1]-1,a[2],12,0,0)}
+function iso(x){return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
+function add(x,n){var z=new Date(x.getTime());z.setDate(z.getDate()+n);return z}
+function fmt(x){return new Intl.DateTimeFormat('pt-PT',{day:'2-digit',month:'short',year:'numeric'}).format(x)}
+function wd(x){return new Intl.DateTimeFormat('pt-PT',{weekday:'long'}).format(x)}
+function weekday(x){var w=x.getDay();return w>=1 && w<=5}
+function value(id){return $(id).value}
+function querySkyscanner(r){var s=function(x){return iso(x).slice(2).replace(/-/g,'')};var url='https://www.skyscanner.pt/transporte/voos/lis/rec/'+s(r.out)+'/'+s(r.back)+'/?adultsv2=3&childrenv2='+encodeURIComponent(value('age'))+'&cabinclass=economy&rtn=1';return url}
+function queryGoogle(r){var text='Voos ida e volta LIS REC partida '+iso(r.out)+' regresso '+iso(r.back)+' para 3 adultos e 1 criança com '+value('age')+' anos';return 'https://www.google.com/travel/flights?hl=pt-PT&q='+encodeURIComponent(text)}
+function getPeriods(){var year=value('year'), grade=value('grade'), months=YEAR[year].map(function(x){return Object.assign({},x)});var summer=SUMMER[year];months.push({id:'verao',name:'Verão',start:summer[grade],end:summer.end,official:'Início após o fim das aulas; fim conservador para evitar faltas.'});return months.filter(function(x){return value('holiday')==='all'||x.id===value('holiday')})}
+function check(){var min=Number(value('minDays')),max=Number(value('maxDays')),age=Number(value('age'));if(!Number.isInteger(min)||!Number.isInteger(max)||min<3||max>10||max<min){alert('Seleciona uma duração válida entre 3 e 10 dias (máximo ≥ mínimo).');return false}if(!Number.isInteger(age)||age<2||age>17){alert('A idade da criança deve estar entre 2 e 17 anos.');return false}return true}
+function makeRows(){rows=[];var daysMin=Number(value('minDays')),daysMax=Number(value('maxDays')),buffer=Number(value('buffer')),choice=value('daypref');var today=d(iso(new Date()));getPeriods().forEach(function(p){var from=d(p.start),to=d(p.end);for(var depart=new Date(from.getTime());depart<=to;depart=add(depart,1)){if(depart<today)continue;for(var nights=daysMin;nights<=daysMax;nights++){var back=add(depart,nights);if(add(back,buffer)>to)continue;if(choice==='midweek'&&(!weekday(depart)||!weekday(back)))continue;if(choice==='weekend'&&![0,6].includes(depart.getDay()))continue;var mid=(weekday(depart)&&weekday(back))?0:1;rows.push({out:depart,back:back,days:nights,period:p,score:mid*50+Math.abs(nights-8)*2+((depart.getDay()===2||depart.getDay()===3)?0:1)})}}});rows.sort(function(a,b){return a.score-b.score||a.out-b.out||a.days-b.days})}
+function card(r,i){var best=i<3;var el=document.createElement('article');el.className='card';
+ el.innerHTML='<div class="card-top"><div><strong>'+r.period.name+' · '+r.days+' dias</strong><div class="meta">'+r.period.official+'</div></div><span class="chip">'+(best?'Boa data a comparar':'Datas compatíveis')+'</span></div>'+
+ '<div class="timeline"><div class="point"><small>IDA · Lisboa</small><b>'+fmt(r.out)+'</b><small>'+wd(r.out)+'</small></div><div class="arrow" aria-hidden="true">➜</div><div class="point"><small>VOLTA · Recife</small><b>'+fmt(r.back)+'</b><small>'+wd(r.back)+'</small></div></div>'+
+ '<div class="card-buttons"><a class="btn" href="'+querySkyscanner(r)+'" target="_blank" rel="noopener noreferrer">Skyscanner ↗</a><a class="btn secondary" href="'+queryGoogle(r)+'" target="_blank" rel="noopener noreferrer">Google Flights ↗</a></div>';
+ return el}
+function render(){var cards=$('cards');cards.replaceChildren();var list=rows.slice(0,visible);list.forEach(function(r,i){cards.appendChild(card(r,i))});$('more').hidden=rows.length<=visible;var holidays=Array.from(new Set(rows.map(function(r){return r.period.name}))).length;$('stats').innerHTML='<div class="stat"><b>'+rows.length+'</b><span>combinações de datas</span></div><div class="stat"><b>'+holidays+'</b><span>períodos com opções</span></div><div class="stat"><b>3 + 1</b><span>adultos + criança</span></div>';
+ $('result-message').textContent=rows.length?'A mostrar '+list.length+' de '+rows.length+' opções. Datas ordenadas para facilitar a comparação; não por preço.':'Sem datas compatíveis com estes filtros.';
+ if(!rows.length){var box=document.createElement('div');box.className='empty';box.innerHTML='<h3>Nenhuma combinação encontrada</h3><p>Experimenta outra pausa escolar, diminui o mínimo de dias ou reduz a margem de regresso. O Carnaval é curto para uma viagem intercontinental.</p>';cards.appendChild(box)}
+}
+function save(){try{var o={};['year','holiday','grade','age','minDays','maxDays','buffer','daypref'].forEach(function(k){o[k]=value(k)});localStorage.setItem('lrx_filters',JSON.stringify(o))}catch(e){}}
+function restore(){try{var o=JSON.parse(localStorage.getItem('lrx_filters')||'{}');Object.keys(o).forEach(function(k){var e=$(k);if(e && Array.from(e.options||[]).some(function(opt){return opt.value===String(o[k])}) || e && e.tagName==='INPUT'){e.value=o[k]}})}catch(e){}}
+function search(){if(!check())return;visible=8;makeRows();render();save()}
+function csv(){if(!rows.length){alert('Não há datas para exportar.');return}var lines=[['Férias','Partida LIS','Volta REC','Dias','Chegada a Lisboa estimada','Observações'].join(';')];rows.forEach(function(r){lines.push([r.period.name,iso(r.out),iso(r.back),r.days,iso(add(r.back,1)),'"Confirmar horários e preços nos sites externos"'].join(';'))});var blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='datas-lisboa-recife.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},500)}
+$('form').addEventListener('submit',function(e){e.preventDefault();search()});$('more').addEventListener('click',function(){visible+=8;render()});$('export').addEventListener('click',csv);
+restore();search();
+})();
+</script>
+</body>
+</html>
