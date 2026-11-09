@@ -43,6 +43,7 @@ h1{font-size:clamp(2rem,5vw,3.8rem);line-height:1.12;max-width:760px;margin:12px
 .calc-panel{margin:20px 0}.calc-panel h2{margin:0;letter-spacing:-.025em;font-size:1.37rem}.calc-panel .calc-text{margin:7px 0 18px;color:var(--muted);font-size:.89rem}
 .calc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.calc-controls{margin-bottom:17px}.calc-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.calc-metric{background:#f1f7fa;border-radius:12px;border:1px solid #dbe9ec;padding:14px 10px;min-width:0}.calc-metric span{display:block;font-size:.75rem;color:var(--muted);font-weight:750}.calc-metric strong{display:block;font-size:clamp(.95rem,2vw,1.34rem);line-height:1.25;margin-top:5px;overflow-wrap:anywhere}.calc-metric.important{background:#e2f5ef;border-color:#b9e5d4}.calc-message{background:#f5f9fb;border:1px solid #dfecf0;border-radius:10px;margin-top:12px;padding:12px 13px;font-size:.88rem;color:#31566c}.calc-message.error{background:#fff1ec;border-color:#fad8cb;color:#913b20}
 .calc-quick{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 17px}.calc-quick button{border-radius:11px;border:1px solid #bcd9d6;background:#e8f6f2;padding:8px 11px;color:var(--teal-dark);font-weight:800;font-size:.82rem}
+.calc-goal{border-top:1px solid #dce7eb;margin-top:22px;padding-top:20px}.calc-goal h3{font-size:1.12rem;letter-spacing:-.015em;margin:0 0 7px}.calc-goal p{font-size:.88rem;color:var(--muted);margin:0 0 15px}.calc-goal .calc-grid{margin-bottom:14px}
 .calc-btn{border:1px solid #cbdfe0;background:#eff7f7;color:#075c61;border-radius:11px;font-weight:800;padding:10px 12px;width:100%;margin-top:10px;font-size:.83rem}
 .sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:850px){.form-grid,.calc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calc-results{grid-template-columns:repeat(2,minmax(0,1fr))}.header{padding-bottom:70px}.hero{margin-top:38px}.badge{font-size:.7rem}.wrap{margin-top:-38px}}
@@ -91,6 +92,17 @@ h1{font-size:clamp(2rem,5vw,3.8rem);line-height:1.12;max-width:760px;margin:12px
   <div class="calc-quick"><span class="hint">Exemplo da viagem 22 mar. – 2 abr.:</span><button type="button" id="calcSunday">Trabalhar domingo, 4/4</button><button type="button" id="calcTuesday">Trabalhar terça, 6/4</button></div>
   <div class="calc-results" id="calc-results" aria-live="polite"></div>
   <div id="calc-message" class="calc-message" aria-live="polite"></div>
+  <div class="calc-goal" aria-labelledby="calc-goal-title">
+   <h3 id="calc-goal-title">Quanto precisamos de faturar a mais?</h3>
+   <p>Define o que pretendes financiar antes da partida. O valor é faturação <b>acima dos 1.100 € semanais habituais</b>, não lucro líquido.</p>
+   <div class="calc-grid">
+    <div class="field"><label for="calcSaveStart">Começar a juntar a partir de</label><input id="calcSaveStart" type="date" value=""></div>
+    <div class="field"><label for="calcGoal">Objetivo a recuperar</label><select id="calcGoal"><option value="full">Viagem e rendimento perdido</option><option value="expenses">Só voos e outras despesas</option></select></div>
+    <div class="field"><label for="calcMarginMode">Custos da faturação extra</label><select id="calcMarginMode"><option value="proportional">Energia/GPL proporcionais</option><option value="noextra">Sem energia/GPL adicional</option></select></div>
+   </div>
+   <div id="calc-goal-results" class="calc-results" aria-live="polite"></div>
+   <div id="calc-goal-message" class="calc-message" aria-live="polite"></div>
+  </div>
  </section>
  <section class="panel compare-section" aria-labelledby="prices-title">
   <h2 id="prices-title">💶 Preços dos voos — comparação familiar</h2>
@@ -182,36 +194,58 @@ function nextWorkday(day){
 }
 function calcNumber(id){var el=$(id),raw=el.value.trim();return raw===''?NaN:Number(raw)}
 function calculateHolidayCost(){
- var result=$('calc-results'),message=$('calc-message'),rawDates=['calcStart','calcBack','calcArrival','calcResume'];
- if(rawDates.some(function(id){return !value(id)||!/^\d{4}-\d{2}-\d{2}$/.test(value(id))})){
-  result.replaceChildren();message.textContent='Seleciona todas as datas para calcular.';message.className='calc-message error';return;
- }
+ var result=$('calc-results'),message=$('calc-message'),goalResult=$('calc-goal-results'),goalMessage=$('calc-goal-message');
+ function error(txt){result.replaceChildren();message.textContent=txt;message.className='calc-message error';goalResult.replaceChildren();goalMessage.textContent='Corrige os dados acima para calcular a faturação adicional.';goalMessage.className='calc-message error'}
+ var rawDates=['calcStart','calcBack','calcArrival','calcResume'];
+ if(rawDates.some(function(id){return !value(id)||!/^\d{4}-\d{2}-\d{2}$/.test(value(id))})){error('Preenche as datas da viagem e do regresso ao trabalho.');return}
  var start=d(value('calcStart')),flightBack=d(value('calcBack')),arrival=d(value('calcArrival')),resume=d(value('calcResume'));
- if(flightBack<start||arrival<flightBack||resume<=arrival||resume<=start){
-  result.replaceChildren();message.textContent='Verifica as datas: o regresso ao trabalho deve ser posterior à chegada a Lisboa, e o voo de volta não pode anteceder a partida.';message.className='calc-message error';return;
- }
+ if(flightBack<start||arrival<flightBack||resume<=arrival||resume<=start){error('Verifica as datas: o regresso ao trabalho deve ser posterior à chegada a Lisboa e o voo de volta não pode anteceder a partida.');return}
  var revenue=calcNumber('calcRevenue'),fuel=calcNumber('calcFuel'),tickets=calcNumber('calcTickets'),other=calcNumber('calcOther');
- if([revenue,fuel,tickets,other].some(function(x){return !Number.isFinite(x)||x<0})){
-  result.replaceChildren();message.textContent='Introduz valores financeiros válidos, iguais ou superiores a zero.';message.className='calc-message error';return;
- }
- var off=Number(value('calcOffday'));if(resume.getDay()===off){result.replaceChildren();message.textContent='O primeiro dia de trabalho coincide com a folga semanal. Seleciona o dia seguinte em que efetivamente voltam a trabalhar.';message.className='calc-message error';return}
+ if([revenue,fuel,tickets,other].some(function(x){return !Number.isFinite(x)||x<0})||revenue<=0){error('Indica faturação semanal positiva e despesas válidas (zero ou mais).');return}
+ if(revenue/6<=fuel){error('O custo diário de energia/GPL tem de ser inferior à faturação média diária para este cálculo.');return}
+ var off=Number(value('calcOffday'));
+ if(resume.getDay()===off){error('O primeiro dia de trabalho coincide com a folga semanal. Escolhe a data em que efetivamente regressam ao trabalho.');return}
  var days=0,calendar=0;
- for(var cursor=new Date(start.getTime());cursor<resume&&calendar<730;cursor=add(cursor,1),calendar++){if(cursor.getDay()!==off)days++}
- if(calendar>=730){result.replaceChildren();message.textContent='O intervalo não pode ultrapassar dois anos.';message.className='calc-message error';return}
- var billed=days*(revenue/6),saved=days*fuel,loss=billed-saved,total=loss+tickets+other;
+ for(var x=new Date(start.getTime());x<resume&&calendar<730;x=add(x,1),calendar++){if(x.getDay()!==off)days++}
+ if(calendar>=730){error('O intervalo não pode ultrapassar dois anos.');return}
+ var dailyRevenue=revenue/6,marginDay=dailyRevenue-fuel,billed=days*dailyRevenue,saved=days*fuel,loss=days*marginDay,travel=tickets+other,total=loss+travel;
  result.innerHTML=
   '<div class="calc-metric"><span>Dias de trabalho perdidos</span><strong>'+days+' dias</strong></div>'+
   '<div class="calc-metric"><span>Faturação não realizada</span><strong>'+money(billed)+'</strong></div>'+
   '<div class="calc-metric"><span>Energia e GPL poupados</span><strong>− '+money(saved)+'</strong></div>'+
   '<div class="calc-metric important"><span>Rendimento não gerado</span><strong>'+money(loss)+'</strong></div>'+
-  '<div class="calc-metric important"><span>Total com voos e despesas</span><strong>'+money(total)+'</strong></div>';
+  '<div class="calc-metric important"><span>Despesas + rendimento não gerado</span><strong>'+money(total)+'</strong></div>';
  message.className='calc-message';
- message.textContent='Considerados '+days+' dias de trabalho entre '+fmt(start)+' e a véspera de '+fmt(resume)+', excluindo a folga semanal. Faturação diária média: '+money(revenue/6)+'; rendimento diário após energia e GPL: '+money(revenue/6-fuel)+'. '+(tickets||other?'Total inclui os custos adicionais que introduziste. ':'Acrescenta voos, alojamento e outras despesas para obter o total. ')+'Não inclui outros custos variáveis, impostos nem alterações de procura.';
+ message.textContent='Considerados '+days+' dias de trabalho desde '+fmt(start)+' até à véspera de '+fmt(resume)+', excluindo a folga semanal. Faturação habitual por dia: '+money(dailyRevenue)+'; rendimento após energia/GPL: '+money(marginDay)+'. '+(travel>0?'Custos da viagem incluídos: '+money(travel)+'. ':'Faltam os preços reais da viagem; preenche voos e outras despesas. ')+'Não inclui impostos nem outros custos variáveis.';
+ calculateExtraBilling({start:start,revenue:revenue,fuel:fuel,travel:travel,loss:loss,off:off});
  saveHolidayCalculation();
 }
-var calcIds=['calcStart','calcBack','calcArrival','calcResume','calcRevenue','calcFuel','calcOffday','calcTickets','calcOther'];
-function saveHolidayCalculation(){try{var o={};calcIds.forEach(function(id){o[id]=value(id)});localStorage.setItem('lrx_calc_v1',JSON.stringify(o))}catch(e){}}
-function restoreHolidayCalculation(){try{var obj=JSON.parse(localStorage.getItem('lrx_calc_v1')||'{}');calcIds.forEach(function(id){if(Object.prototype.hasOwnProperty.call(obj,id)&&obj[id]!==null)$(id).value=obj[id]})}catch(e){}}
+function calculateExtraBilling(x){
+ var result=$('calc-goal-results'),message=$('calc-goal-message');
+ var startText=value('calcSaveStart');
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(startText)){result.replaceChildren();message.textContent='Seleciona a data em que começas a acumular.';message.className='calc-message error';return}
+ var savingsStart=d(startText),margin=(x.revenue/6-x.fuel)/(x.revenue/6);
+ var mode=value('calcMarginMode'),goal=value('calcGoal'),effectiveMargin=mode==='noextra'?1:margin;
+ var grossForTravel=x.travel/effectiveMargin, grossForFull=(x.travel+x.loss)/effectiveMargin;
+ var target=goal==='expenses'?grossForTravel:grossForFull,financialGoal=goal==='expenses'?x.travel:x.travel+x.loss;
+ var available=0,counter=0;
+ for(var day=new Date(savingsStart.getTime());day<x.start&&counter<730;day=add(day,1),counter++){if(day.getDay()!==x.off)available++}
+ if(counter>=730){result.replaceChildren();message.textContent='A data de início tem de estar a menos de dois anos da viagem.';message.className='calc-message error';return}
+ var extraDay=available>0?target/available:null,extraWeek=available>0?extraDay*6:null;
+ result.innerHTML=
+  '<div class="calc-metric"><span>Despesas da viagem</span><strong>'+money(x.travel)+'</strong></div>'+
+  '<div class="calc-metric"><span>Faturação extra para despesas</span><strong>'+money(grossForTravel)+'</strong></div>'+
+  '<div class="calc-metric"><span>Extra para despesas + pausa</span><strong>'+money(grossForFull)+'</strong></div>'+
+  '<div class="calc-metric important"><span>Objetivo de faturação extra</span><strong>'+money(target)+'</strong></div>'+
+  '<div class="calc-metric important"><span>Faturação extra por semana</span><strong>'+(extraWeek===null?'—':money(extraWeek))+'</strong></div>'+
+  '<div class="calc-metric"><span>Faturação extra por dia de trabalho</span><strong>'+(extraDay===null?'—':money(extraDay))+'</strong></div>'+
+  '<div class="calc-metric"><span>Dias de trabalho disponíveis</span><strong>'+available+' dias</strong></div>';
+ message.className=available>0?'calc-message':'calc-message error';
+ message.textContent='Objetivo financeiro: '+money(financialGoal)+'. '+(available?'Para o acumular antes de '+fmt(x.start)+' seriam necessários '+money(extraDay)+' por dia de trabalho (ou '+money(extraWeek)+' por 6 dias) ACIMA da faturação habitual. ':'Sem dias de trabalho disponíveis até à partida; escolhe uma data de início anterior. ')+(mode==='proportional'?'A conta pressupõe que o custo de energia/GPL cresce proporcionalmente à faturação extra; margem usada: '+(effectiveMargin*100).toFixed(1).replace('.',',')+'%. ':'A conta pressupõe que a faturação extra não exige gastos adicionais de energia/GPL. ')+'Não inclui impostos, comissões adicionais nem outros custos variáveis.';
+}
+var calcIds=['calcStart','calcBack','calcArrival','calcResume','calcRevenue','calcFuel','calcOffday','calcTickets','calcOther','calcSaveStart','calcGoal','calcMarginMode'];
+function saveHolidayCalculation(){try{var data={};calcIds.forEach(function(id){data[id]=value(id)});localStorage.setItem('lrx_calc_v1',JSON.stringify(data))}catch(e){}}
+function restoreHolidayCalculation(){var data={};try{data=JSON.parse(localStorage.getItem('lrx_calc_v1')||'{}')||{}}catch(e){}calcIds.forEach(function(id){if(Object.prototype.hasOwnProperty.call(data,id)&&data[id]!==null)$(id).value=data[id]});if(!value('calcSaveStart'))$('calcSaveStart').value=iso(new Date())}
 function prefillHolidayCalculation(out,back){
  $('calcStart').value=out;$('calcBack').value=back;var arrival=add(d(back),1);$('calcArrival').value=iso(arrival);$('calcResume').value=iso(nextWorkday(arrival));
  var chosen=rows.find(function(r){return iso(r.out)===out&&iso(r.back)===back});if(chosen&&getPrice(chosen)!==null){$('calcTickets').value=getPrice(chosen)}
