@@ -183,7 +183,7 @@ function nextWorkday(day){
 function calcNumber(id){var el=$(id),raw=el.value.trim();return raw===''?NaN:Number(raw)}
 function calculateHolidayCost(){
  var result=$('calc-results'),message=$('calc-message'),rawDates=['calcStart','calcBack','calcArrival','calcResume'];
- if(rawDates.some(function(id){return !value(id)||!/^\\d{4}-\\d{2}-\\d{2}$/.test(value(id))})){
+ if(rawDates.some(function(id){return !value(id)||!/^\d{4}-\d{2}-\d{2}$/.test(value(id))})){
   result.replaceChildren();message.textContent='Seleciona todas as datas para calcular.';message.className='calc-message error';return;
  }
  var start=d(value('calcStart')),flightBack=d(value('calcBack')),arrival=d(value('calcArrival')),resume=d(value('calcResume'));
