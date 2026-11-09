@@ -30,6 +30,16 @@ A calculadora está no mesmo `index.html`, sem exigir serviços externos. Por de
 
 O cálculo apresenta separadamente **dias sem trabalhar, faturação não realizada, energia/GPL poupados e rendimento não gerado**; permite ainda somar o preço dos voos para quatro passageiros e outras despesas introduzidas pelo utilizador. Os valores podem ser personalizados e são guardados localmente neste dispositivo.
 
+#### Faturação extra para financiar as férias
+
+A secção **«Quanto precisamos de faturar a mais?»** calcula o objetivo de faturação adicional para além dos 1.100 € semanais habituais. Permite escolher entre **cobrir só voos e outras despesas** ou **cobrir as despesas e recuperar o rendimento não gerado**.
+
+Calcula igualmente a faturação extra por dia de trabalho e por semana de 6 dias, contando os dias disponíveis entre a **data em que começam a juntar** e o **início das férias**, sem contar as segundas-feiras de folga.
+
+Dois cenários de energia/GPL: (a) os custos aumentam proporcionalmente à faturação extra — estimativa conservadora baseada na proporção atual de combustível; (b) a faturação adicional não gera custos de energia/GPL extra, por exemplo por melhor rendimento nas jornadas habituais. Não inclui outras despesas variáveis, impostos e possíveis comissões.
+
+**Exemplo com custos da viagem ainda por preencher:** na viagem de 22/03 a 02/04/2027, retomando o trabalho em 06/04/2027, estimam-se 12 dias sem trabalhar e 1.840 € de rendimento não gerado. Com energia/GPL proporcional (margem de 83,64%), serão necessários 2.200 € de faturação extra só para compensar a ausência — **mais o montante necessário para pagar voos, alojamento e outras despesas**.
+
 **Não apresenta preços simulados.** As datas e filtros do Skyscanner e Google Flights devem ser confirmados após abrir as ligações. O montante não gerado não corresponde necessariamente ao lucro contabilístico, pois não inclui impostos ou outros custos variáveis.
 
 Fonte oficial: https://diariodarepublica.pt/dr/detalhe/despacho/8368-2024-873447631 (e alterações posteriores).
