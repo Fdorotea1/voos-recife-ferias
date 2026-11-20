@@ -202,6 +202,9 @@ button:disabled{cursor:default;opacity:.6}
 .recovery-result.good{background:#ecfcf4;border-color:#a1dcc5;color:#075d42}
 .recovery-result.bad{background:#fff4f5;border-color:#ef9bac;color:#8e2b3e}
 .recovery-result strong{display:block;margin-bottom:4px}
+.voice-status{font-size:.9rem;color:#385876;background:#eef5ff;border:1px solid #d7e5f8;padding:9px 13px;border-radius:14px;margin-bottom:13px}
+.voice-status.bad{color:#913c48;background:#fff2f4;border-color:#f6d1d8}
+.voice-status.good{color:#126448;background:#e8f9f0;border-color:#caebda}
 @media (max-width:980px){
   .hero,.layout,.summary-card{grid-template-columns:1fr}
   .summary-list{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -232,9 +235,13 @@ button:disabled{cursor:default;opacity:.6}
     </div>
     <div class="actions">
       <button class="plain" type="button" id="resetProgress">Apagar progresso</button>
+      <button class="btn secondary" type="button" id="voiceToggle" aria-pressed="true">🔊 Raquel Neural</button>
+      <button class="btn secondary" type="button" id="voiceRepeat" hidden>Repetir pergunta</button>
       <button class="btn secondary" type="button" id="restartSession">Nova sessão</button>
     </div>
   </header>
+
+  <div id="voiceStatus" class="voice-status" role="status" aria-live="polite">A preparar a voz Raquel Neural…</div>
 
   <section class="hero">
     <article class="hero-card">
@@ -290,7 +297,7 @@ button:disabled{cursor:default;opacity:.6}
         <div class="start-icon" aria-hidden="true">🏕️ 🧗</div>
         <h2 id="startTitle">Pronto para começar a subir?</h2>
         <p id="startDetails">10 perguntas. Terás 15 segundos por resposta.</p>
-        <p>O relógio só começa depois de carregares. Se falhares, no fim recuperas a tabuada inteira, sem tempo, e só depois vês as respostas.</p>
+        <p>O relógio só começa depois de carregares. Se falhares, no fim recuperas a tabuada inteira com tempo próprio, e só depois vês as respostas.</p>
         <button class="btn" id="startGame" type="button">Começar a subir</button>
         <span class="start-note">Jogo gratuito · Não precisa de registo</span>
       </section>
@@ -336,7 +343,7 @@ button:disabled{cursor:default;opacity:.6}
           <p class="recovery-hint" id="recoveryInstruction">1. Toca num resultado. 2. Toca no espaço da conta onde o queres colocar. Para corrigir uma escolha, toca no espaço preenchido para libertar o número.</p>
           <div class="recovery-grid" id="recoveryGrid"></div>
           <p class="recovery-hint">Não existem pistas nem correção durante o jogo. A solução completa só aparece depois da entrega ou quando o tempo acabar.</p>
-          <button type="submit" class="btn" id="submitRecovery" disabled>Verificar tabuada (0/10)</button>
+          <button type="button" class="btn" id="submitRecovery" disabled>Corrigir tabuada (0/10)</button>
         </form>
         <div id="recoveryResult" class="recovery-result" aria-live="polite" hidden></div>
         <div id="recoveryActions" class="actions" style="margin-top:14px" hidden></div>
@@ -460,6 +467,113 @@ button:disabled{cursor:default;opacity:.6}
   let recoveryTimer=null;
   let advanceTimer=null;
   let locked=false;
+  const VOICE_STORAGE='montanha_raquel_neural_enabled';
+  const VOICE_BASE='./audio/raquel/';
+  const narrator={
+    enabled:true,ready:false,voice:null,audio:null,utterance:null,token:0,
+    init(){
+      try{this.enabled=localStorage.getItem(VOICE_STORAGE)!=='off';}catch(e){}
+      this.updateButtons();
+      this.findVoice();
+      if('speechSynthesis' in window){
+        speechSynthesis.addEventListener('voiceschanged',()=>this.findVoice());
+      }
+      // A lista de ficheiros indica se o verdadeiro áudio neural está no site.
+      fetch(VOICE_BASE+'manifest.json',{cache:'no-store'}).then(r=>{
+        if(!r.ok)throw new Error('Pacote de áudio ainda não disponível');
+        return r.json();
+      }).then(data=>{
+        if(data.voice!=='pt-PT-RaquelNeural')throw new Error('Pacote de voz inesperado');
+        this.ready=true;this.status();
+      }).catch(()=>{this.ready=false;this.status();});
+      this.status();
+    },
+    findVoice(){
+      if(!('speechSynthesis' in window))return;
+      const voices=speechSynthesis.getVoices();
+      // NÃO usar Hélia, nem a voz genérica do sistema.
+      this.voice=voices.find(v=>/^pt-pt$/i.test(v.lang)&&/raquel/i.test(v.name)&&/(neural|online|natural|server)/i.test(v.name))||null;
+      this.status();
+    },
+    status(msg){
+      const el=$('voiceStatus');
+      if(!el)return;
+      el.classList.remove('good','bad');
+      if(!this.enabled){el.textContent='Narração desligada. Podes ativar a voz Raquel Neural no topo.';return;}
+      if(msg){el.textContent=msg;el.classList.add('bad');return;}
+      if(this.ready){el.textContent='Raquel Neural (pt-PT) ativa · áudio neural integrado.';el.classList.add('good');return;}
+      if(this.voice){el.textContent='Raquel Neural disponível neste navegador.';el.classList.add('good');return;}
+      el.textContent='Raquel Neural indisponível neste navegador. Não será usada outra voz. A narração só funcionará quando o pacote de áudio estiver publicado.';
+      el.classList.add('bad');
+    },
+    updateButtons(){
+      const btn=$('voiceToggle');
+      if(btn){btn.textContent=this.enabled?'🔊 Raquel Neural':'🔇 Ativar Raquel';btn.setAttribute('aria-pressed',String(this.enabled));}
+    },
+    stop(){
+      this.token++;
+      if(this.audio){try{this.audio.pause();this.audio.currentTime=0;}catch(e){}this.audio.onended=null;this.audio.onerror=null;this.audio=null;}
+      if('speechSynthesis' in window){try{speechSynthesis.cancel();}catch(e){}}
+    },
+    activateQuestionClock(){
+      const s=state.session;
+      if(s?.phase==='game'&&s.current&&!s.current.deadline&&!locked)startTimer();
+    },
+    toggle(){
+      this.enabled=!this.enabled;
+      try{localStorage.setItem(VOICE_STORAGE,this.enabled?'on':'off');}catch(e){}
+      this.stop();this.updateButtons();this.status();
+      this.activateQuestionClock();
+      if(this.enabled)this.repeat();
+    },
+    repeat(){
+      this.activateQuestionClock();
+      const s=state.session;
+      if(s?.phase==='game'&&s.current){
+        const q=s.current;this.say('q_'+q.a+'_'+q.b,`Quanto é ${q.a} vezes ${q.b}?`);
+      }else if(s?.phase==='recovery'&&s.recoveryTasks?.length){
+        const t=s.recoveryTasks[s.recoveryIndex];if(t)this.say('recovery_'+t.table,`Vamos recuperar a tabuada do ${t.table}. Coloca os dez resultados nas contas certas.`);
+      }else this.say('intro','Bem-vindo à Montanha da Tabuada! Vamos chegar ao Topo dos Mestres.');
+    },
+    say(key,text,finished){
+      this.stop();
+      const id=this.token;
+      const done=()=>{if(this.token===id&&typeof finished==='function')finished();};
+      if(!this.enabled){done();return;}
+      const speakBrowser=()=>{
+        const voice=this.voice;
+        if(!voice||!('speechSynthesis' in window)){
+          this.status();done();return;
+        }
+        try{
+          const utter=new SpeechSynthesisUtterance(text);
+          utter.voice=voice;utter.lang='pt-PT';utter.rate=0.95;utter.pitch=1;
+          utter.onend=done;
+          utter.onerror=()=>{this.status('Não foi possível reproduzir a voz Raquel Neural neste dispositivo.');done();};
+          this.utterance=utter;
+          speechSynthesis.speak(utter);
+        }catch(e){this.status('Falha ao iniciar a narração Raquel Neural.');done();}
+      };
+      if(!this.ready){speakBrowser();return;}
+      try{
+        const audio=new Audio(VOICE_BASE+key+'.mp3');
+        this.audio=audio;
+        audio.preload='auto';
+        audio.onended=done;
+        audio.onerror=()=>{
+          if(this.token!==id)return;
+          this.audio=null;
+          // Se faltar um áudio do pacote, usar apenas Raquel Neural nativa, nunca outra voz.
+          speakBrowser();
+        };
+        const playing=audio.play();
+        if(playing&&typeof playing.catch==='function')playing.catch(()=>{
+          if(this.token!==id)return;
+          speakBrowser();
+        });
+      }catch(e){speakBrowser();}
+    }
+  };
 
   function loadState(){
     const fresh={camp:0,bestCamp:0,steps:0,session:null};
@@ -519,9 +633,10 @@ button:disabled{cursor:default;opacity:.6}
   function renderRecoveryTimer(){
     const attempt=state.session?.recoveryAttempt;
     if(!attempt)return;
-    const remain=Math.max(0,(attempt.deadline-Date.now())/1000);
+    const clockNow=attempt.finishedAt ?? Date.now();
+    const remain=Math.max(0,(attempt.deadline-clockNow)/1000);
     const percent=attempt.duration?100*remain/attempt.duration:0;
-    $('recoveryTime').textContent=formatClock(remain);
+    $('recoveryTime').textContent=formatClock(remain)+(attempt.finishedAt!==null?' · parado':'');
     $('recoveryTime').classList.toggle('urgent',percent<=20);
     const bar=$('recoveryTimeFill');
     bar.style.width=percent+'%';
@@ -547,11 +662,13 @@ button:disabled{cursor:default;opacity:.6}
     const s=state.session;
     const attempt=s?.recoveryAttempt;
     if(!s||s.phase!=='recovery'||s.recoveryGraded||!attempt)return false;
+    if(attempt.ready)return false;
     if(Date.now()>=attempt.deadline){gradeRecovery(true);return false;}
     return true;
   }
 
   function startSession(){
+    narrator.stop();
     stopTimer();
     stopRecoveryTimer();
     stopAdvance();
@@ -600,8 +717,11 @@ button:disabled{cursor:default;opacity:.6}
     s.questionIndex+=1;
     locked=false;
     $('feedback').innerHTML='<strong>Escolhe com calma.</strong> Tens tempo, mas o relógio não espera.';
-    startTimer();
     render();
+    const question=s.current;
+    narrator.say('q_'+a+'_'+b,`Quanto é ${a} vezes ${b}?`,()=>{
+      if(state.session===s && s.phase==='game' && s.current===question && !locked)startTimer();
+    });
   }
 
   function makeOptions(a,b,right,cfg){
@@ -668,6 +788,7 @@ button:disabled{cursor:default;opacity:.6}
     s.answers.push({
       a:q.a,b:q.b,right:q.right,choice,isTimeout,good
     });
+    narrator.say(good?'correct':isTimeout?'timeout':'incorrect',good?'Muito bem!':isTimeout?'Tempo esgotado!':'Tenta novamente na próxima vez.');
     render();
     advanceTimer=setTimeout(()=>{advanceTimer=null;nextQuestion();},1350);
   }
@@ -710,7 +831,7 @@ button:disabled{cursor:default;opacity:.6}
     s.recoveryGraded=false;
     const order=shuffle(Array.from({length:RECOVERY_LENGTH},(_,i)=>i+1));
     const bank=shuffle(Array.from({length:RECOVERY_LENGTH},(_,i)=>task.table*(i+1)));
-    s.recoveryAttempt={order,bank,placed:{},selected:null,duration:recoverySeconds(),deadline:0};
+    s.recoveryAttempt={order,bank,placed:{},selected:null,duration:recoverySeconds(),deadline:0,ready:false,finishedAt:null};
     $('recoveryProgress').textContent=`Recuperação ${s.recoveryIndex+1} de ${s.recoveryTasks.length}`;
     $('recoveryTitle').textContent=`${meta.icon} Tabuada do ${task.table} · ${meta.theme}`;
     $('recoveryExplain').textContent=`Falhaste ${task.missed} ${plural(task.missed,'conta','contas')} desta tabuada. Associa os 10 resultados baralhados às contas, dentro do tempo. Só vês a correção no final.`;
@@ -748,6 +869,7 @@ button:disabled{cursor:default;opacity:.6}
     $('recoveryInstruction').textContent='1. Toca num número. 2. Toca no espaço da conta. Podes trocar um número ou tocar no espaço preenchido para o devolver.';
     renderRecoveryAnswers();
     startRecoveryTimer();
+    narrator.say('recovery_'+task.table,`Agora vamos recuperar a tabuada do ${task.table}. Coloca os dez resultados nos espaços certos.`);
     $('recoveryPanel').scrollIntoView({behavior:'smooth',block:'start'});
   }
 
@@ -765,7 +887,7 @@ button:disabled{cursor:default;opacity:.6}
       b.textContent=String(value);
       b.setAttribute('aria-label',`Escolher o resultado ${value}`);
       b.setAttribute('aria-pressed',String(a.selected===value));
-      if(used.has(value)){
+      if(used.has(value)||a.ready){
         b.disabled=true;
         b.classList.add('used');
         b.setAttribute('aria-label',`Resultado ${value} já utilizado`);
@@ -781,11 +903,12 @@ button:disabled{cursor:default;opacity:.6}
       const filled=value!==undefined;
       slot.textContent=filled?String(value):'—';
       slot.classList.toggle('filled',filled);
+      slot.disabled=a.ready || s.recoveryGraded;
       slot.setAttribute('aria-label',filled?`${s.recoveryTasks[s.recoveryIndex].table} vezes ${mult}: resultado colocado ${value}. Tocar para retirar ou trocar.`:`${s.recoveryTasks[s.recoveryIndex].table} vezes ${mult}: espaço por preencher`);
     }
     const filled=Object.keys(a.placed).length;
-    $('submitRecovery').disabled=filled!==RECOVERY_LENGTH;
-    $('submitRecovery').textContent=`Corrigir tabuada (${filled}/${RECOVERY_LENGTH})`;
+    $('submitRecovery').disabled=filled!==RECOVERY_LENGTH || s.recoveryGraded;
+    $('submitRecovery').textContent=a.ready?'Corrigir agora — tempo parado (10/10)':`Corrigir tabuada (${filled}/${RECOVERY_LENGTH})`;
   }
 
   function selectRecoveryNumber(value){
@@ -812,13 +935,27 @@ button:disabled{cursor:default;opacity:.6}
       a.selected=null;
       $('recoveryInstruction').textContent='Colocaste '+value+'. Escolhe outro número e depois o espaço correspondente.';
     }
+    if(Object.keys(a.placed).length===RECOVERY_LENGTH && !a.ready){
+      // A décima resposta termina o desafio: o relógio pára e não há edições após este momento.
+      if(Date.now()>=a.deadline){gradeRecovery(true);return;}
+      a.finishedAt=Date.now();
+      a.ready=true;
+      stopRecoveryTimer();
+      renderRecoveryTimer();
+      $('recoveryInstruction').textContent='Preencheste as 10 contas! O relógio parou. Carrega em «Corrigir agora» para veres o resultado.';
+      renderRecoveryAnswers();
+      $('submitRecovery').scrollIntoView({behavior:'smooth',block:'nearest'});
+      return;
+    }
     renderRecoveryAnswers();
   }
 
   function submitRecovery(e){
     e.preventDefault();
-    if(!recoveryActive())return;
-    const attempt=state.session.recoveryAttempt;
+    const s=state.session;
+    if(!s||s.phase!=='recovery'||s.recoveryGraded)return;
+    const attempt=s.recoveryAttempt;
+    if(!attempt)return;
     const filled=Object.keys(attempt.placed).length;
     if(filled!==RECOVERY_LENGTH){
       $('recoveryResult').hidden=false;
@@ -832,12 +969,14 @@ button:disabled{cursor:default;opacity:.6}
   function gradeRecovery(timedOut){
     const s=state.session;
     if(!s||s.phase!=='recovery'||s.recoveryGraded)return;
-    // A entrega com prazo expirado não pode ser considerada válida.
-    if(!timedOut && Date.now()>=s.recoveryAttempt.deadline)timedOut=true;
+    // A conclusão da 10.ª resposta fixa a hora da entrega. Após isso o tempo não corre.
+    const attempt=s.recoveryAttempt;
+    const finishedAt=attempt.finishedAt ?? Date.now();
+    if(finishedAt>=attempt.deadline)timedOut=true;
+    attempt.finishedAt=finishedAt;
     stopRecoveryTimer();
     renderRecoveryTimer();
     const task=s.recoveryTasks[s.recoveryIndex];
-    const attempt=s.recoveryAttempt;
     s.recoveryGraded=true;
     task.attempted=true;
     let correct=0;
@@ -874,6 +1013,7 @@ button:disabled{cursor:default;opacity:.6}
       detail.textContent='A correção aparece agora, depois da entrega. Podes repetir para tentar 10/10 dentro do tempo.';
     }
     info.replaceChildren(heading,detail);
+    narrator.say(perfect?'recovery_success':'recovery_fail',perfect?'Muito bem! Recuperaste os pontos!':'Ainda não recuperaste os pontos. Podes tentar de novo.');
     $('submitRecovery').disabled=true;
     $('recoveryInstruction').textContent='A correção foi revelada. Confere os resultados antes da próxima tentativa.';
     const actions=$('recoveryActions');
@@ -1005,6 +1145,7 @@ button:disabled{cursor:default;opacity:.6}
     $('tip').textContent='Dica: '+cfg.tip;
     const playing=Boolean(s&&s.phase==='game'&&s.current);
     $('startPanel').hidden=Boolean(s);
+    $('voiceRepeat').hidden=!(s&&((s.phase==='game'&&s.current)||(s.phase==='recovery')));
     $('recoveryPanel').hidden=!(s&&s.phase==='recovery');
     $('restartSession').disabled=Boolean(s&&s.phase==='recovery');
     $('questionCard').hidden=!playing;
@@ -1160,6 +1301,8 @@ button:disabled{cursor:default;opacity:.6}
       $('summaryClimber').textContent='🧗';
     }
     box.hidden=false;
+    narrator.say(outcome==='upCamp'||outcome==='upStep'||outcome==='master'?'session_up':outcome==='downCamp'||outcome==='downStep'?'session_down':'session_stay',
+      outcome==='upCamp'||outcome==='upStep'||outcome==='master'?'Muito bem, o alpinista subiu!':outcome==='downCamp'||outcome==='downStep'?'O alpinista desceu um pouco. Vamos continuar a aprender.':'O alpinista manteve a posição.');
     box.scrollIntoView({behavior:'smooth',block:'start'});
   }
 
@@ -1169,6 +1312,7 @@ button:disabled{cursor:default;opacity:.6}
 
   function resetAll(){
     if(!confirm('Queres mesmo apagar todo o progresso do alpinista?')) return;
+    narrator.stop();
     stopTimer();
     stopRecoveryTimer();
     stopAdvance();
@@ -1177,12 +1321,16 @@ button:disabled{cursor:default;opacity:.6}
     render();
   }
 
+  $('voiceToggle').addEventListener('click',()=>narrator.toggle());
+  $('voiceRepeat').addEventListener('click',()=>narrator.repeat());
   $('startGame').addEventListener('click',startSession);
   $('recoveryForm').addEventListener('submit',submitRecovery);
+  $('submitRecovery').addEventListener('click',submitRecovery);
   $('restartSession').addEventListener('click',()=>{if(state.session?.phase==='recovery')return;if(!state.session||confirm('Terminar a sessão atual e começar uma nova?'))startSession();});
   $('playAgain').addEventListener('click',startSession);
   $('resetProgress').addEventListener('click',resetAll);
 
+  narrator.init();
   render();
 })();
 </script>
