@@ -177,8 +177,21 @@ button:disabled{cursor:default;opacity:.6}
 .recovery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}
 .recovery-item{display:flex;align-items:center;gap:10px;justify-content:space-between;border:1px solid var(--line);border-radius:16px;padding:10px 12px;background:#f9fbff;flex-wrap:wrap}
 .recovery-item label{font-weight:800;display:flex;align-items:center;gap:7px;color:var(--accent-text)}
-.recovery-item input{width:95px;max-width:100%;padding:10px;border-radius:12px;border:2px solid #b9c7dc;font:inherit;text-align:center;font-weight:800;color:var(--ink);background:#fff}
-.recovery-item input:focus{outline:3px solid #c3bfff;outline-offset:1px}
+.recovery-sticky{position:sticky;top:6px;z-index:5;background:#ffffffeb;backdrop-filter:blur(9px);padding:8px;border-radius:20px;border:1px solid var(--line);box-shadow:0 9px 22px #223a6419}
+.recovery-clock{padding:10px 12px;border:1px solid var(--line);border-radius:18px;background:#f7faff;margin:0 0 9px}
+.recovery-clock-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px;font-weight:800}
+.recovery-clock strong{font-size:1.25rem;font-variant-numeric:tabular-nums}
+.recovery-clock strong.urgent{color:var(--bad)}
+.recovery-bank{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:0 0 4px}
+.recovery-bank-title{font-weight:800;margin:4px 4px 6px}
+.recovery-token{min-height:51px;padding:8px 4px;border-radius:15px;border:2px solid var(--accent);background:var(--accent-soft);color:var(--accent-text);font-weight:900;font-size:1.2rem;font-variant-numeric:tabular-nums}
+.recovery-token.selected{outline:3px solid #25204f;outline-offset:2px;box-shadow:0 4px 14px #26225424}
+.recovery-token.used{background:#eef1f5;color:#8d9aaa;border-color:#dae1e9;opacity:.6;text-decoration:line-through}
+.answer-slot{min-height:48px;min-width:90px;max-width:110px;flex:1 0 90px;padding:7px 9px;border-radius:13px;border:2px dashed #a6b5cd;background:#fff;color:#3b5070;font-weight:900;font-size:1.12rem;font-variant-numeric:tabular-nums}
+.answer-slot.filled{border-style:solid;border-color:var(--accent);background:var(--accent-soft);color:var(--accent-text)}
+.answer-slot:focus-visible,.recovery-token:focus-visible{outline:3px solid #151249;outline-offset:2px}
+.recovery-item.correct .answer-slot{border-color:#58ba94;background:#e9fbf2;color:#075d42}
+.recovery-item.incorrect .answer-slot{border-color:#ec8b9f;background:#fff0f2;color:#962d42}
 .recovery-item.correct{background:#edfcf4;border-color:#a1dcc5}
 .recovery-item.incorrect{background:#fff3f4;border-color:#ef9bac}
 .recovery-item .reveal{flex-basis:100%;font-weight:800;font-size:.92rem}
@@ -307,14 +320,23 @@ button:disabled{cursor:default;opacity:.6}
           <div>
             <span class="recovery-kicker" id="recoveryProgress">Recuperação 1 de 1</span>
             <h2 id="recoveryTitle">Recupera a tabuada</h2>
-            <p id="recoveryExplain">Preenche as dez multiplicações baralhadas. Sem cronómetro.</p>
+            <p id="recoveryExplain">Escolhe cada número baralhado e coloca-o no espaço certo antes do tempo terminar.</p>
           </div>
           <div class="recovery-points" id="recoveryPoints">+1 possível</div>
         </div>
         <form id="recoveryForm" novalidate>
+          <div class="recovery-sticky">
+            <div class="recovery-clock" id="recoveryClock">
+              <div class="recovery-clock-head"><span>⏱️ Tempo para recuperar</span><strong id="recoveryTime">2:00</strong></div>
+              <div class="track" role="progressbar" aria-label="Tempo restante para a recuperação" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="recoveryTimeTrack"><div class="fill timer-fill" id="recoveryTimeFill"></div></div>
+            </div>
+            <p class="recovery-bank-title">Resultados baralhados — escolhe um número:</p>
+            <div class="recovery-bank" id="recoveryBank" role="group" aria-label="Resultados por colocar"></div>
+          </div>
+          <p class="recovery-hint" id="recoveryInstruction">1. Toca num resultado. 2. Toca no espaço da conta onde o queres colocar. Para corrigir uma escolha, toca no espaço preenchido para libertar o número.</p>
           <div class="recovery-grid" id="recoveryGrid"></div>
-          <p class="recovery-hint">Não há correção imediata. Preenche todos os campos e só depois clica em <strong>Corrigir tabuada</strong>.</p>
-          <button type="submit" class="btn" id="submitRecovery">Corrigir tabuada</button>
+          <p class="recovery-hint">Não existem pistas nem correção durante o jogo. A solução completa só aparece depois da entrega ou quando o tempo acabar.</p>
+          <button type="submit" class="btn" id="submitRecovery" disabled>Verificar tabuada (0/10)</button>
         </form>
         <div id="recoveryResult" class="recovery-result" aria-live="polite" hidden></div>
         <div id="recoveryActions" class="actions" style="margin-top:14px" hidden></div>
@@ -435,6 +457,7 @@ button:disabled{cursor:default;opacity:.6}
 
   let state=loadState();
   let timer=null;
+  let recoveryTimer=null;
   let advanceTimer=null;
   let locked=false;
 
@@ -479,8 +502,58 @@ button:disabled{cursor:default;opacity:.6}
     if(advanceTimer!==null){clearTimeout(advanceTimer);advanceTimer=null;}
   }
 
+  function stopRecoveryTimer(){
+    if(recoveryTimer!==null){clearInterval(recoveryTimer);recoveryTimer=null;}
+  }
+
+  function recoverySeconds(){
+    // 2:00 no início; o último nível tem 1:00 para as 10 contas.
+    return Math.round(120 - 60*state.camp/(LEVELS.length-1));
+  }
+
+  function formatClock(seconds){
+    const sec=Math.max(0,Math.ceil(seconds));
+    return `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`;
+  }
+
+  function renderRecoveryTimer(){
+    const attempt=state.session?.recoveryAttempt;
+    if(!attempt)return;
+    const remain=Math.max(0,(attempt.deadline-Date.now())/1000);
+    const percent=attempt.duration?100*remain/attempt.duration:0;
+    $('recoveryTime').textContent=formatClock(remain);
+    $('recoveryTime').classList.toggle('urgent',percent<=20);
+    const bar=$('recoveryTimeFill');
+    bar.style.width=percent+'%';
+    bar.classList.toggle('warn',percent<=40);
+    bar.classList.toggle('danger',percent<=20);
+    $('recoveryTimeTrack').setAttribute('aria-valuenow',String(Math.round(percent)));
+  }
+
+  function startRecoveryTimer(){
+    stopRecoveryTimer();
+    const attempt=state.session?.recoveryAttempt;
+    if(!attempt)return;
+    attempt.deadline=Date.now()+attempt.duration*1000;
+    renderRecoveryTimer();
+    recoveryTimer=setInterval(()=>{
+      if(!state.session||state.session.phase!=='recovery'||state.session.recoveryGraded){stopRecoveryTimer();return;}
+      renderRecoveryTimer();
+      if(Date.now()>=attempt.deadline)gradeRecovery(true);
+    },100);
+  }
+
+  function recoveryActive(){
+    const s=state.session;
+    const attempt=s?.recoveryAttempt;
+    if(!s||s.phase!=='recovery'||s.recoveryGraded||!attempt)return false;
+    if(Date.now()>=attempt.deadline){gradeRecovery(true);return false;}
+    return true;
+  }
+
   function startSession(){
     stopTimer();
+    stopRecoveryTimer();
     stopAdvance();
     locked=false;
     $('recoveryPanel').hidden=true;
@@ -601,6 +674,7 @@ button:disabled{cursor:default;opacity:.6}
 
   function finishSession(){
     stopTimer();
+    stopRecoveryTimer();
     stopAdvance();
     const s=state.session;
     if(!s || s.phase!=='game')return;
@@ -632,33 +706,37 @@ button:disabled{cursor:default;opacity:.6}
     const task=s.recoveryTasks[s.recoveryIndex];
     if(!task)return finalizeSession();
     const meta=TABLES[task.table];
+    stopRecoveryTimer();
     s.recoveryGraded=false;
     const order=shuffle(Array.from({length:RECOVERY_LENGTH},(_,i)=>i+1));
+    const bank=shuffle(Array.from({length:RECOVERY_LENGTH},(_,i)=>task.table*(i+1)));
+    s.recoveryAttempt={order,bank,placed:{},selected:null,duration:recoverySeconds(),deadline:0};
     $('recoveryProgress').textContent=`Recuperação ${s.recoveryIndex+1} de ${s.recoveryTasks.length}`;
     $('recoveryTitle').textContent=`${meta.icon} Tabuada do ${task.table} · ${meta.theme}`;
-    $('recoveryExplain').textContent=`Falhaste ${task.missed} ${plural(task.missed,'conta','contas')} desta tabuada. Preenche os 10 campos em ordem baralhada. Só vês a correção no final, quando entregares tudo.`;
+    $('recoveryExplain').textContent=`Falhaste ${task.missed} ${plural(task.missed,'conta','contas')} desta tabuada. Associa os 10 resultados baralhados às contas, dentro do tempo. Só vês a correção no final.`;
     $('recoveryPoints').textContent=`${task.potential} ${plural(task.potential,'ponto','pontos')} para recuperar`;
     $('recoveryPoints').style.background=meta.soft;
     $('recoveryPoints').style.color=meta.text;
     document.documentElement.style.setProperty('--accent',meta.color);
     document.documentElement.style.setProperty('--accent-soft',meta.soft);
     document.documentElement.style.setProperty('--accent-text',meta.text);
-    const grid=$('recoveryGrid');
-    grid.replaceChildren();
+    $('recoveryBank').replaceChildren();
+    $('recoveryGrid').replaceChildren();
     for(const mult of order){
       const card=document.createElement('div');
       card.className='recovery-item';
-      const label=document.createElement('label');
-      const id=`rec_${task.table}_${mult}`;
-      label.setAttribute('for',id);
+      card.dataset.mult=String(mult);
+      const label=document.createElement('span');
+      label.className='equation-label';
       label.textContent=`${meta.icon} ${task.table} × ${mult} =`;
-      const input=document.createElement('input');
-      input.type='number';input.inputMode='numeric';input.min='0';input.max='999';input.step='1';
-      input.id=id;input.name=id;input.autocomplete='off';input.required=true;
-      input.setAttribute('aria-label',`${task.table} vezes ${mult}`);
-      input.dataset.mult=String(mult);
-      card.append(label,input);
-      grid.append(card);
+      label.style.fontWeight='800';
+      const slot=document.createElement('button');
+      slot.type='button';
+      slot.className='answer-slot';
+      slot.dataset.mult=String(mult);
+      slot.addEventListener('click',()=>placeRecoveryAnswer(mult));
+      card.append(label,slot);
+      $('recoveryGrid').append(card);
     }
     $('recoveryResult').hidden=true;
     $('recoveryResult').textContent='';
@@ -666,56 +744,138 @@ button:disabled{cursor:default;opacity:.6}
     $('recoveryActions').hidden=true;
     $('recoveryActions').replaceChildren();
     $('recoveryForm').hidden=false;
-    $('submitRecovery').disabled=false;
-    $('submitRecovery').textContent='Corrigir tabuada';
+    $('recoveryClock').hidden=false;
+    $('recoveryInstruction').textContent='1. Toca num número. 2. Toca no espaço da conta. Podes trocar um número ou tocar no espaço preenchido para o devolver.';
+    renderRecoveryAnswers();
+    startRecoveryTimer();
     $('recoveryPanel').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function renderRecoveryAnswers(){
+    const s=state.session;
+    if(!s||s.phase!=='recovery'||!s.recoveryAttempt)return;
+    const a=s.recoveryAttempt;
+    const used=new Set(Object.values(a.placed));
+    const bank=$('recoveryBank');
+    bank.replaceChildren();
+    for(const value of a.bank){
+      const b=document.createElement('button');
+      b.type='button';
+      b.className='recovery-token';
+      b.textContent=String(value);
+      b.setAttribute('aria-label',`Escolher o resultado ${value}`);
+      b.setAttribute('aria-pressed',String(a.selected===value));
+      if(used.has(value)){
+        b.disabled=true;
+        b.classList.add('used');
+        b.setAttribute('aria-label',`Resultado ${value} já utilizado`);
+      }else{
+        if(a.selected===value)b.classList.add('selected');
+        b.addEventListener('click',()=>selectRecoveryNumber(value));
+      }
+      bank.append(b);
+    }
+    for(const slot of $('recoveryGrid').querySelectorAll('button.answer-slot')){
+      const mult=Number(slot.dataset.mult);
+      const value=a.placed[mult];
+      const filled=value!==undefined;
+      slot.textContent=filled?String(value):'—';
+      slot.classList.toggle('filled',filled);
+      slot.setAttribute('aria-label',filled?`${s.recoveryTasks[s.recoveryIndex].table} vezes ${mult}: resultado colocado ${value}. Tocar para retirar ou trocar.`:`${s.recoveryTasks[s.recoveryIndex].table} vezes ${mult}: espaço por preencher`);
+    }
+    const filled=Object.keys(a.placed).length;
+    $('submitRecovery').disabled=filled!==RECOVERY_LENGTH;
+    $('submitRecovery').textContent=`Corrigir tabuada (${filled}/${RECOVERY_LENGTH})`;
+  }
+
+  function selectRecoveryNumber(value){
+    if(!recoveryActive())return;
+    const a=state.session.recoveryAttempt;
+    if(Object.values(a.placed).includes(value))return;
+    a.selected=a.selected===value?null:value;
+    $('recoveryInstruction').textContent=a.selected===null?'Escolhe um número para o colocares numa conta.':'Escolheste '+a.selected+'. Agora toca no espaço da conta em que o queres colocar.';
+    renderRecoveryAnswers();
+  }
+
+  function placeRecoveryAnswer(mult){
+    if(!recoveryActive())return;
+    const a=state.session.recoveryAttempt;
+    if(a.selected===null){
+      // Tocar num espaço preenchido sem número escolhido devolve o número ao conjunto.
+      const prev=a.placed[mult];
+      delete a.placed[mult];
+      if(prev!==undefined)$('recoveryInstruction').textContent='Retiraste '+prev+'. Podes voltar a colocá-lo noutra conta.';
+    }else{
+      // Substituir uma resposta liberta automaticamente o número que estava aqui.
+      const value=a.selected;
+      a.placed[mult]=value;
+      a.selected=null;
+      $('recoveryInstruction').textContent='Colocaste '+value+'. Escolhe outro número e depois o espaço correspondente.';
+    }
+    renderRecoveryAnswers();
   }
 
   function submitRecovery(e){
     e.preventDefault();
-    const s=state.session;
-    if(!s||s.phase!=='recovery'||s.recoveryGraded)return;
-    const task=s.recoveryTasks[s.recoveryIndex];
-    const inputs=[...$('recoveryGrid').querySelectorAll('input[data-mult]')];
-    const blank=inputs.find(input=>input.value.trim()===''||!/^\d+$/.test(input.value.trim()));
-    if(blank){
+    if(!recoveryActive())return;
+    const attempt=state.session.recoveryAttempt;
+    const filled=Object.keys(attempt.placed).length;
+    if(filled!==RECOVERY_LENGTH){
       $('recoveryResult').hidden=false;
       $('recoveryResult').className='recovery-result';
-      $('recoveryResult').textContent='Preenche os 10 campos com números inteiros antes de entregares. Ainda não foi feita a correção.';
-      blank.focus();return;
+      $('recoveryResult').textContent=`Ainda faltam ${RECOVERY_LENGTH-filled} resultados. A correção continua escondida.`;
+      return;
     }
+    gradeRecovery(false);
+  }
+
+  function gradeRecovery(timedOut){
+    const s=state.session;
+    if(!s||s.phase!=='recovery'||s.recoveryGraded)return;
+    // A entrega com prazo expirado não pode ser considerada válida.
+    if(!timedOut && Date.now()>=s.recoveryAttempt.deadline)timedOut=true;
+    stopRecoveryTimer();
+    renderRecoveryTimer();
+    const task=s.recoveryTasks[s.recoveryIndex];
+    const attempt=s.recoveryAttempt;
     s.recoveryGraded=true;
     task.attempted=true;
     let correct=0;
-    for(const input of inputs){
-      const mult=Number(input.dataset.mult);
+    for(const slot of $('recoveryGrid').querySelectorAll('button.answer-slot')){
+      const mult=Number(slot.dataset.mult);
       const right=task.table*mult;
-      const valid=Number(input.value)===right;
+      const selected=attempt.placed[mult];
+      const valid=selected===right;
       if(valid)correct++;
-      input.disabled=true;
-      const card=input.closest('.recovery-item');
+      slot.disabled=true;
+      const card=slot.closest('.recovery-item');
       card.classList.add(valid?'correct':'incorrect');
       const result=document.createElement('span');
       result.className='reveal';
       result.textContent=valid?'Certo!':`O resultado certo é ${right}.`;
       card.append(result);
     }
-    const perfect=correct===RECOVERY_LENGTH;
+    for(const token of $('recoveryBank').querySelectorAll('button'))token.disabled=true;
+    const perfect=!timedOut && correct===RECOVERY_LENGTH;
     if(perfect){task.solved=true;s.recoveredPoints+=task.potential;}
     const info=$('recoveryResult');
     info.hidden=false;
     info.className='recovery-result '+(perfect?'good':'bad');
     const heading=document.createElement('strong');
-    const text=document.createElement('span');
+    const detail=document.createElement('span');
     if(perfect){
-      heading.textContent=`10/10! Recuperaste ${task.potential} ${plural(task.potential,'ponto','pontos')}.`;
-      text.textContent='Dominaste esta tabuada baralhada. Os pontos voltam à tua pontuação de subida.';
+      heading.textContent=`10/10 dentro do tempo! Recuperaste ${task.potential} ${plural(task.potential,'ponto','pontos')}.`;
+      detail.textContent='Colocaste corretamente os dez resultados. A montanha devolve-te os pontos perdidos.';
+    }else if(timedOut){
+      heading.textContent=`Tempo esgotado — ${correct}/10 certos. Ainda não recuperaste os pontos.`;
+      detail.textContent='O relógio chegou a zero. As soluções aparecem agora; podes repetir a tabuada com as contas e os números novamente baralhados.';
     }else{
       heading.textContent=`${correct}/10. Ainda não recuperaste os ${task.potential} ${plural(task.potential,'ponto','pontos')}.`;
-      text.textContent='As respostas certas aparecem agora, depois da entrega. Podes treinar e tentar de novo, com as contas novamente baralhadas.';
+      detail.textContent='A correção aparece agora, depois da entrega. Podes repetir para tentar 10/10 dentro do tempo.';
     }
-    info.replaceChildren(heading,text);
+    info.replaceChildren(heading,detail);
     $('submitRecovery').disabled=true;
+    $('recoveryInstruction').textContent='A correção foi revelada. Confere os resultados antes da próxima tentativa.';
     const actions=$('recoveryActions');
     actions.hidden=false;
     actions.replaceChildren();
@@ -735,6 +895,7 @@ button:disabled{cursor:default;opacity:.6}
   }
 
   function nextRecoveryTable(){
+    stopRecoveryTimer();
     const s=state.session;
     if(!s||s.phase!=='recovery')return;
     s.recoveryIndex++;
@@ -744,6 +905,7 @@ button:disabled{cursor:default;opacity:.6}
 
   function finalizeSession(){
     stopTimer();
+    stopRecoveryTimer();
     stopAdvance();
     const s=state.session;
     if(!s)return;
@@ -1008,6 +1170,7 @@ button:disabled{cursor:default;opacity:.6}
   function resetAll(){
     if(!confirm('Queres mesmo apagar todo o progresso do alpinista?')) return;
     stopTimer();
+    stopRecoveryTimer();
     stopAdvance();
     try{localStorage.removeItem(APP_KEY);}catch(e){}
     state={camp:0,bestCamp:0,steps:0,session:null};
