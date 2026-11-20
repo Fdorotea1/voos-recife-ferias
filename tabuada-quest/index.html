@@ -512,7 +512,7 @@ button:disabled{cursor:default;opacity:.6}
     },
     stop(){
       this.token++;
-      if(this.audio){try{this.audio.pause();this.audio.currentTime=0;}catch(e){}this.audio.onended=null;this.audio.onerror=null;this.audio=null;}
+      if(this.audio){try{this.audio.pause();this.audio.currentTime=0;}catch(e){}this.audio.onended=null;this.audio.onerror=null;}
       if('speechSynthesis' in window){try{speechSynthesis.cancel();}catch(e){}}
     },
     activateQuestionClock(){
@@ -556,13 +556,14 @@ button:disabled{cursor:default;opacity:.6}
       };
       if(!this.ready){speakBrowser();return;}
       try{
-        const audio=new Audio(VOICE_BASE+key+'.mp3');
+        // Reutilizar o mesmo leitor facilita a reprodução em telemóveis (especialmente iOS).
+        const audio=this.audio||new Audio();
         this.audio=audio;
+        audio.src=VOICE_BASE+key+'.mp3';
         audio.preload='auto';
         audio.onended=done;
         audio.onerror=()=>{
           if(this.token!==id)return;
-          this.audio=null;
           // Se faltar um áudio do pacote, usar apenas Raquel Neural nativa, nunca outra voz.
           speakBrowser();
         };
