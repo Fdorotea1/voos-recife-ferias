@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#edf3ff">
-<meta name="description" content="Montanha da Tabuada: um jogo gratuito de multiplicação com cronómetro, 20 níveis, cores, símbolos e um alpinista a subir até ao topo dos mestres.">
+<meta name="description" content="Montanha da Tabuada: 20 níveis, cronómetro e recuperação de tabuadas baralhadas com correção só depois de responder a tudo.">
 <title>Montanha da Tabuada — começa a aventura</title>
 <style>
 :root{
@@ -167,6 +167,28 @@ button:disabled{cursor:default;opacity:.6}
 .result{padding:12px;border-radius:18px;background:#f8fbff;border:1px solid var(--line)}
 .result strong{display:block;font-size:1.15rem}
 .footnote{margin-top:12px;color:#60728b;font-size:.95rem}
+/* A recuperação só revela resultados depois de a criança entregar os dez campos. */
+.recovery-panel{padding:10px 2px 4px}
+.recovery-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.recovery-header h2{font-size:clamp(1.5rem,3vw,2rem);margin:7px 0}
+.recovery-header p{margin:0;color:#49607b}
+.recovery-kicker{display:inline-flex;padding:6px 12px;background:var(--brand-soft);color:#4338b2;font-weight:800;border-radius:999px;font-size:.9rem}
+.recovery-points{padding:12px 16px;border:1px solid #addfcd;background:#ebfbf4;color:#0f7354;border-radius:16px;font-weight:800}
+.recovery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}
+.recovery-item{display:flex;align-items:center;gap:10px;justify-content:space-between;border:1px solid var(--line);border-radius:16px;padding:10px 12px;background:#f9fbff;flex-wrap:wrap}
+.recovery-item label{font-weight:800;display:flex;align-items:center;gap:7px;color:var(--accent-text)}
+.recovery-item input{width:95px;max-width:100%;padding:10px;border-radius:12px;border:2px solid #b9c7dc;font:inherit;text-align:center;font-weight:800;color:var(--ink);background:#fff}
+.recovery-item input:focus{outline:3px solid #c3bfff;outline-offset:1px}
+.recovery-item.correct{background:#edfcf4;border-color:#a1dcc5}
+.recovery-item.incorrect{background:#fff3f4;border-color:#ef9bac}
+.recovery-item .reveal{flex-basis:100%;font-weight:800;font-size:.92rem}
+.recovery-item.correct .reveal{color:var(--good)}
+.recovery-item.incorrect .reveal{color:var(--bad)}
+.recovery-hint{font-size:.93rem;color:#586d85}
+.recovery-result{margin-top:15px;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:#f5f8fe}
+.recovery-result.good{background:#ecfcf4;border-color:#a1dcc5;color:#075d42}
+.recovery-result.bad{background:#fff4f5;border-color:#ef9bac;color:#8e2b3e}
+.recovery-result strong{display:block;margin-bottom:4px}
 @media (max-width:980px){
   .hero,.layout,.summary-card{grid-template-columns:1fr}
   .summary-list{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -174,6 +196,7 @@ button:disabled{cursor:default;opacity:.6}
 @media (max-width:760px){
   .hero-grid,.summary-list,.mountain-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .options{grid-template-columns:1fr}
+  .recovery-grid{grid-template-columns:1fr}
   .wrap{width:min(100% - 18px,1120px)}
   .panel,.mountain,.palette,.summary,.levels,.hero-card,.rule-card{border-radius:24px}
 }
@@ -204,22 +227,22 @@ button:disabled{cursor:default;opacity:.6}
     <article class="hero-card">
       <div class="eyebrow">⏱️ Cada resposta tem tempo · 20 níveis</div>
       <h1>Sobe a montanha com a tabuada.</h1>
-      <p>Acerta nas multiplicações antes do tempo acabar. Cada nível fica um pouco mais rápido. Se a sessão correr bem, o alpinista sobe. Se correr mal, desce para voltar a treinar.</p>
+      <p>Acerta nas multiplicações antes do tempo acabar. Se houver erros, treina a tabuada inteira em ordem aleatória. Para subir de nível, conquista três boas sessões.</p>
       <div class="hero-grid">
         <div class="mini"><span>Nível atual</span><strong id="heroLevel">1 / 20</strong></div>
         <div class="mini"><span>Tempo por pergunta</span><strong id="heroTime">15 s</strong></div>
         <div class="mini"><span>Perguntas por sessão</span><strong id="heroQuestions">10</strong></div>
-        <div class="mini"><span>Melhor subida</span><strong id="heroBest">Nível 1</strong></div>
+        <div class="mini"><span>Passos neste nível</span><strong id="heroSteps">0 / 3</strong></div>
       </div>
     </article>
     <aside class="rule-card">
       <h2>Como sobe o alpinista</h2>
       <ol>
-        <li>Uma resposta certa vale <strong>+1 ponto de subida</strong>.</li>
-        <li>Um erro vale <strong>0 pontos</strong>.</li>
-        <li>Se o tempo acabar, a pergunta conta como errada e retira <strong>1 ponto de subida</strong>.</li>
-        <li><strong>9–10 pontos</strong> → sobe 2 acampamentos; <strong>7–8</strong> → sobe 1.</li>
-        <li><strong>5–6</strong> → mantém-se; <strong>3–4</strong> → desce 1; <strong>0–2</strong> → desce 2.</li>
+        <li>Uma resposta certa vale <strong>+1 ponto</strong>; um erro vale <strong>0</strong>, e uma resposta sem tempo vale <strong>−1</strong>.</li>
+        <li>Se falhares, aparece a <strong>tabuada completa</strong> (×1 a ×10), com as contas baralhadas.</li>
+        <li>Só vês as respostas certas <strong>depois de preencher e entregar os 10 campos</strong>.</li>
+        <li><strong>10/10 na recuperação</strong> devolve os pontos perdidos nessa tabuada. Podes repetir se falhares.</li>
+        <li><strong>8–10 pontos e recuperações completas</strong> → ganhas 1 passo. Precisas de <strong>3 passos</strong> para subir um nível. Até 4 pontos, perdes 1 passo.</li>
       </ol>
       <p class="footnote">Cada tabuada tem uma cor e um símbolo fixos para ajudar a memória visual da criança.</p>
     </aside>
@@ -254,7 +277,7 @@ button:disabled{cursor:default;opacity:.6}
         <div class="start-icon" aria-hidden="true">🏕️ 🧗</div>
         <h2 id="startTitle">Pronto para começar a subir?</h2>
         <p id="startDetails">10 perguntas. Terás 15 segundos por resposta.</p>
-        <p>O relógio só começa depois de carregares no botão. Cada resposta fora de tempo tira um ponto de subida.</p>
+        <p>O relógio só começa depois de carregares. Se falhares, no fim recuperas a tabuada inteira, sem tempo, e só depois vês as respostas.</p>
         <button class="btn" id="startGame" type="button">Começar a subir</button>
         <span class="start-note">Jogo gratuito · Não precisa de registo</span>
       </section>
@@ -278,6 +301,24 @@ button:disabled{cursor:default;opacity:.6}
       </div>
 
       <div class="tip" id="tip" hidden>Dica: começa por contar os grupos e depois pensa em saltos iguais.</div>
+
+      <section class="recovery-panel" id="recoveryPanel" aria-labelledby="recoveryTitle" hidden>
+        <div class="recovery-header">
+          <div>
+            <span class="recovery-kicker" id="recoveryProgress">Recuperação 1 de 1</span>
+            <h2 id="recoveryTitle">Recupera a tabuada</h2>
+            <p id="recoveryExplain">Preenche as dez multiplicações baralhadas. Sem cronómetro.</p>
+          </div>
+          <div class="recovery-points" id="recoveryPoints">+1 possível</div>
+        </div>
+        <form id="recoveryForm" novalidate>
+          <div class="recovery-grid" id="recoveryGrid"></div>
+          <p class="recovery-hint">Não há correção imediata. Preenche todos os campos e só depois clica em <strong>Corrigir tabuada</strong>.</p>
+          <button type="submit" class="btn" id="submitRecovery">Corrigir tabuada</button>
+        </form>
+        <div id="recoveryResult" class="recovery-result" aria-live="polite" hidden></div>
+        <div id="recoveryActions" class="actions" style="margin-top:14px" hidden></div>
+      </section>
     </section>
 
     <aside class="side">
@@ -302,6 +343,7 @@ button:disabled{cursor:default;opacity:.6}
           <div class="stat"><strong id="campBest">Campo Base</strong><span>Melhor posição</span></div>
           <div class="stat"><strong id="toTop">19 passos</strong><span>Até ao topo</span></div>
           <div class="stat"><strong id="levelTime">15 s</strong><span>Tempo neste nível</span></div>
+          <div class="stat"><strong id="campSteps">0 / 3 passos</strong><span>Para o próximo nível</span></div>
         </div>
       </section>
 
@@ -327,10 +369,11 @@ button:disabled{cursor:default;opacity:.6}
           <div class="result"><strong id="sumCorrect">0</strong><span>Certas</span></div>
           <div class="result"><strong id="sumWrong">0</strong><span>Erradas</span></div>
           <div class="result"><strong id="sumTime">0</strong><span>Sem tempo</span></div>
-          <div class="result"><strong id="sumMove">0</strong><span>Acampamentos</span></div>
+          <div class="result"><strong id="sumRecovered">0</strong><span>Pontos recuperados</span></div>
+          <div class="result"><strong id="sumMove">0</strong><span>Passos de subida</span></div>
           <div class="result"><strong id="sumEffective">0 / 10</strong><span>Pontos de subida</span></div>
         </div>
-        <p class="footnote" id="summaryPenalty">Cada tempo esgotado retira um ponto de subida.</p>
+        <p class="footnote" id="summaryPenalty">A recuperação pode devolver os pontos perdidos nas contas falhadas.</p>
         <p class="footnote" id="summaryFootnote">Prepara-te para a próxima sessão.</p>
         <div class="actions" style="margin-top:12px">
           <button class="btn" type="button" id="playAgain">Jogar nova sessão</button>
@@ -346,6 +389,8 @@ button:disabled{cursor:default;opacity:.6}
 
   const APP_KEY='montanha_tabuada_v3';
   const SESSION_QUESTIONS=10;
+  const STEPS_PER_LEVEL=3;
+  const RECOVERY_LENGTH=10;
   const TABLES={
     2:{name:'Tabuada do 2', color:'#2563eb', soft:'#eaf2ff', text:'#174aa7', icon:'💧', thing:'gotas', one:'gota', theme:'azul'},
     3:{name:'Tabuada do 3', color:'#d6a000', soft:'#fff8d8', text:'#785500', icon:'⭐', thing:'estrelas', one:'estrela', theme:'amarelo'},
@@ -394,20 +439,21 @@ button:disabled{cursor:default;opacity:.6}
   let locked=false;
 
   function loadState(){
-    const fresh={camp:0,bestCamp:0,session:null};
+    const fresh={camp:0,bestCamp:0,steps:0,session:null};
     try{
       const raw=JSON.parse(localStorage.getItem(APP_KEY)||'null');
       if(!raw||!Number.isInteger(raw.camp)||raw.camp<0||raw.camp>=LEVELS.length) return fresh;
       return {
         camp:raw.camp,
         bestCamp:clamp(Number(raw.bestCamp)||0,0,LEVELS.length-1),
+        steps:clamp(Number.isInteger(raw.steps)?raw.steps:0,0,STEPS_PER_LEVEL-1),
         session:null
       };
     }catch(e){return fresh;}
   }
 
   function saveState(){
-    try{localStorage.setItem(APP_KEY,JSON.stringify({camp:state.camp,bestCamp:state.bestCamp}));}catch(e){}
+    try{localStorage.setItem(APP_KEY,JSON.stringify({camp:state.camp,bestCamp:state.bestCamp,steps:state.steps}));}catch(e){}
   }
 
   function level(){return LEVELS[state.camp];}
@@ -437,9 +483,11 @@ button:disabled{cursor:default;opacity:.6}
     stopTimer();
     stopAdvance();
     locked=false;
+    $('recoveryPanel').hidden=true;
     $('summary').hidden=true;
     const cfg=level();
     state.session={
+      phase:'game',
       questionIndex:0,
       correct:0,
       wrong:0,
@@ -450,6 +498,11 @@ button:disabled{cursor:default;opacity:.6}
       retry:[],
       current:null,
       startCamp:state.camp,
+      startSteps:state.steps,
+      recoveryTasks:[],
+      recoveryIndex:0,
+      recoveryGraded:false,
+      recoveredPoints:0,
       answers:[]
     };
     nextQuestion();
@@ -459,7 +512,7 @@ button:disabled{cursor:default;opacity:.6}
   function nextQuestion(){
     const s=state.session;
     const cfg=level();
-    if(!s) return;
+    if(!s||s.phase!=='game') return;
     if(s.questionIndex>=s.total){
       finishSession();
       return;
@@ -515,7 +568,7 @@ button:disabled{cursor:default;opacity:.6}
 
   function answer(choice,isTimeout=false){
     const s=state.session;
-    if(!s||!s.current||locked) return;
+    if(!s||s.phase!=='game'||!s.current||locked) return;
     const q=s.current;
     // Verifica o prazo aqui também: um clique tardio não pode escapar ao cronómetro.
     if(q.deadline && Date.now()>=q.deadline) isTimeout=true;
@@ -548,27 +601,178 @@ button:disabled{cursor:default;opacity:.6}
 
   function finishSession(){
     stopTimer();
+    stopAdvance();
     const s=state.session;
-    if(!s) return;
-    const before=s.startCamp;
-    const climbScore=clamp(s.correct-s.timeouts,0,SESSION_QUESTIONS);
-    const move=movementFor(climbScore);
-    state.camp=clamp(state.camp+move,0,LEVELS.length-1);
-    const actualMove=state.camp-before;
+    if(!s || s.phase!=='game')return;
+    const map=new Map();
+    for(const ans of s.answers){
+      if(ans.good)continue;
+      if(!map.has(ans.a))map.set(ans.a,{table:ans.a,missed:0,timeouts:0,potential:0,solved:false,attempted:false});
+      const task=map.get(ans.a);
+      task.missed++;
+      if(ans.isTimeout)task.timeouts++;
+      task.potential+=ans.isTimeout?2:1;
+    }
+    s.recoveryTasks=[...map.values()].sort((a,b)=>a.table-b.table);
+    s.recoveryIndex=0;
+    s.recoveredPoints=0;
+    s.current=null;
+    if(s.recoveryTasks.length){
+      s.phase='recovery';
+      render();
+      showRecoveryTable();
+    }else{
+      finalizeSession();
+    }
+  }
+
+  function showRecoveryTable(){
+    const s=state.session;
+    if(!s || s.phase!=='recovery')return;
+    const task=s.recoveryTasks[s.recoveryIndex];
+    if(!task)return finalizeSession();
+    const meta=TABLES[task.table];
+    s.recoveryGraded=false;
+    const order=shuffle(Array.from({length:RECOVERY_LENGTH},(_,i)=>i+1));
+    $('recoveryProgress').textContent=`Recuperação ${s.recoveryIndex+1} de ${s.recoveryTasks.length}`;
+    $('recoveryTitle').textContent=`${meta.icon} Tabuada do ${task.table} · ${meta.theme}`;
+    $('recoveryExplain').textContent=`Falhaste ${task.missed} ${plural(task.missed,'conta','contas')} desta tabuada. Preenche os 10 campos em ordem baralhada. Só vês a correção no final, quando entregares tudo.`;
+    $('recoveryPoints').textContent=`${task.potential} ${plural(task.potential,'ponto','pontos')} para recuperar`;
+    $('recoveryPoints').style.background=meta.soft;
+    $('recoveryPoints').style.color=meta.text;
+    document.documentElement.style.setProperty('--accent',meta.color);
+    document.documentElement.style.setProperty('--accent-soft',meta.soft);
+    document.documentElement.style.setProperty('--accent-text',meta.text);
+    const grid=$('recoveryGrid');
+    grid.replaceChildren();
+    for(const mult of order){
+      const card=document.createElement('div');
+      card.className='recovery-item';
+      const label=document.createElement('label');
+      const id=`rec_${task.table}_${mult}`;
+      label.setAttribute('for',id);
+      label.textContent=`${meta.icon} ${task.table} × ${mult} =`;
+      const input=document.createElement('input');
+      input.type='number';input.inputMode='numeric';input.min='0';input.max='999';input.step='1';
+      input.id=id;input.name=id;input.autocomplete='off';input.required=true;
+      input.setAttribute('aria-label',`${task.table} vezes ${mult}`);
+      input.dataset.mult=String(mult);
+      card.append(label,input);
+      grid.append(card);
+    }
+    $('recoveryResult').hidden=true;
+    $('recoveryResult').textContent='';
+    $('recoveryResult').className='recovery-result';
+    $('recoveryActions').hidden=true;
+    $('recoveryActions').replaceChildren();
+    $('recoveryForm').hidden=false;
+    $('submitRecovery').disabled=false;
+    $('submitRecovery').textContent='Corrigir tabuada';
+    $('recoveryPanel').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function submitRecovery(e){
+    e.preventDefault();
+    const s=state.session;
+    if(!s||s.phase!=='recovery'||s.recoveryGraded)return;
+    const task=s.recoveryTasks[s.recoveryIndex];
+    const inputs=[...$('recoveryGrid').querySelectorAll('input[data-mult]')];
+    const blank=inputs.find(input=>input.value.trim()===''||!/^\d+$/.test(input.value.trim()));
+    if(blank){
+      $('recoveryResult').hidden=false;
+      $('recoveryResult').className='recovery-result';
+      $('recoveryResult').textContent='Preenche os 10 campos com números inteiros antes de entregares. Ainda não foi feita a correção.';
+      blank.focus();return;
+    }
+    s.recoveryGraded=true;
+    task.attempted=true;
+    let correct=0;
+    for(const input of inputs){
+      const mult=Number(input.dataset.mult);
+      const right=task.table*mult;
+      const valid=Number(input.value)===right;
+      if(valid)correct++;
+      input.disabled=true;
+      const card=input.closest('.recovery-item');
+      card.classList.add(valid?'correct':'incorrect');
+      const result=document.createElement('span');
+      result.className='reveal';
+      result.textContent=valid?'Certo!':`O resultado certo é ${right}.`;
+      card.append(result);
+    }
+    const perfect=correct===RECOVERY_LENGTH;
+    if(perfect){task.solved=true;s.recoveredPoints+=task.potential;}
+    const info=$('recoveryResult');
+    info.hidden=false;
+    info.className='recovery-result '+(perfect?'good':'bad');
+    const heading=document.createElement('strong');
+    const text=document.createElement('span');
+    if(perfect){
+      heading.textContent=`10/10! Recuperaste ${task.potential} ${plural(task.potential,'ponto','pontos')}.`;
+      text.textContent='Dominaste esta tabuada baralhada. Os pontos voltam à tua pontuação de subida.';
+    }else{
+      heading.textContent=`${correct}/10. Ainda não recuperaste os ${task.potential} ${plural(task.potential,'ponto','pontos')}.`;
+      text.textContent='As respostas certas aparecem agora, depois da entrega. Podes treinar e tentar de novo, com as contas novamente baralhadas.';
+    }
+    info.replaceChildren(heading,text);
+    $('submitRecovery').disabled=true;
+    const actions=$('recoveryActions');
+    actions.hidden=false;
+    actions.replaceChildren();
+    const primary=document.createElement('button');
+    primary.className='btn';primary.type='button';
+    primary.textContent=perfect?(s.recoveryIndex<s.recoveryTasks.length-1?'Tabuada seguinte':'Ver resultado da sessão'):'Tentar novamente';
+    primary.addEventListener('click',perfect?nextRecoveryTable:showRecoveryTable);
+    actions.append(primary);
+    if(!perfect){
+      const skip=document.createElement('button');
+      skip.type='button';skip.className='btn secondary';
+      skip.textContent='Terminar sem recuperar estes pontos';
+      skip.addEventListener('click',nextRecoveryTable);
+      actions.append(skip);
+    }
+    info.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
+  function nextRecoveryTable(){
+    const s=state.session;
+    if(!s||s.phase!=='recovery')return;
+    s.recoveryIndex++;
+    if(s.recoveryIndex>=s.recoveryTasks.length)finalizeSession();
+    else showRecoveryTable();
+  }
+
+  function finalizeSession(){
+    stopTimer();
+    stopAdvance();
+    const s=state.session;
+    if(!s)return;
+    const beforeCamp=s.startCamp;
+    const beforeSteps=s.startSteps;
+    const base=s.correct-s.timeouts;
+    const score=clamp(base+s.recoveredPoints,0,SESSION_QUESTIONS);
+    const allRecovered=s.recoveryTasks.every(t=>t.solved);
+    const qualified=score>=8&&allRecovered;
+    let outcome='stayed';
+    if(qualified){
+      if(state.camp===LEVELS.length-1){
+        state.steps=STEPS_PER_LEVEL-1;
+        outcome='master';
+      }else{
+        state.steps++;
+        outcome='upStep';
+        if(state.steps>=STEPS_PER_LEVEL){state.camp++;state.steps=0;outcome='upCamp';}
+      }
+    }else if(score<=4){
+      if(state.steps>0){state.steps--;outcome='downStep';}
+      else if(state.camp>0){state.camp--;state.steps=STEPS_PER_LEVEL-1;outcome='downCamp';}
+    }
     state.bestCamp=Math.max(state.bestCamp,state.camp);
     saveState();
     state.session=null;
     locked=false;
     render();
-    showSummary(before,state.camp,actualMove,s,climbScore,move);
-  }
-
-  function movementFor(score){
-    if(score>=9) return 2;
-    if(score>=7) return 1;
-    if(score>=5) return 0;
-    if(score>=3) return -1;
-    return -2;
+    showSummary(beforeCamp,beforeSteps,state.camp,state.steps,s,score,allRecovered,outcome);
   }
 
   function render(){
@@ -584,7 +788,8 @@ button:disabled{cursor:default;opacity:.6}
     $('heroLevel').textContent=`${state.camp+1} / 20`;
     $('heroTime').textContent=`${cfg.time} s`;
     $('heroQuestions').textContent=String(SESSION_QUESTIONS);
-    $('heroBest').textContent=`Nível ${state.bestCamp+1}`;
+    $('heroSteps').textContent=`${state.steps} / ${STEPS_PER_LEVEL}`;
+    $('campSteps').textContent=`${state.steps} / ${STEPS_PER_LEVEL} passos`;
     $('campBest').textContent=`Nível ${state.bestCamp+1} · ${posText(state.bestCamp)}`;
     $('campNow').textContent=`Nível ${state.camp+1} · ${cfg.name}`;
     $('toTop').textContent=`${LEVELS.length-1-state.camp} ${plural(LEVELS.length-1-state.camp,'passo','passos')}`;
@@ -627,7 +832,7 @@ button:disabled{cursor:default;opacity:.6}
       dot.innerHTML=`<i></i><span>${i===19?'Mestres':i+1}</span>`;
       path.appendChild(dot);
     });
-    $('climber').style.bottom=(state.camp/(LEVELS.length-1))*100+'%';
+    $('climber').style.bottom=(clamp(state.camp+state.steps/STEPS_PER_LEVEL,0,LEVELS.length-1)/(LEVELS.length-1))*100+'%';
   }
 
   function renderQuestion(){
@@ -636,14 +841,16 @@ button:disabled{cursor:default;opacity:.6}
     $('levelBadge').textContent=`Nível ${state.camp+1} · ${cfg.name}`;
     $('levelDesc').textContent=`${listTables(cfg.tables)} · ${cfg.time} s por resposta`;
     $('tip').textContent='Dica: '+cfg.tip;
-    const playing=Boolean(s&&s.current);
-    $('startPanel').hidden=playing;
+    const playing=Boolean(s&&s.phase==='game'&&s.current);
+    $('startPanel').hidden=Boolean(s);
+    $('recoveryPanel').hidden=!(s&&s.phase==='recovery');
+    $('restartSession').disabled=Boolean(s&&s.phase==='recovery');
     $('questionCard').hidden=!playing;
     $('feedback').hidden=!playing;
     $('tip').hidden=!playing;
     $('timerProgress').hidden=!playing;
     $('sessionProgress').hidden=!playing;
-    $('startDetails').textContent=`Nível ${state.camp+1}: ${cfg.name}. ${SESSION_QUESTIONS} perguntas, ${cfg.time} segundos por resposta. Tabuadas: ${listTables(cfg.tables)}.`;
+    $('startDetails').textContent=`Nível ${state.camp+1}: ${cfg.name}. ${SESSION_QUESTIONS} perguntas, ${cfg.time} segundos por resposta. Tabuadas: ${listTables(cfg.tables)}. Passos atuais: ${state.steps}/${STEPS_PER_LEVEL}.`;
     $('startTitle').textContent=state.camp===19?'Conquistas o Topo dos Mestres?':'Pronto para subir a montanha?';
     if(!s||!s.current){
       $('questionCounter').textContent=`Pergunta 0 de ${SESSION_QUESTIONS}`;
@@ -740,48 +947,55 @@ button:disabled{cursor:default;opacity:.6}
     if(force) fill.style.width='100%';
   }
 
-  function showSummary(before,after,move,s,climbScore,intendedMove){
+  function showSummary(beforeCamp,beforeSteps,afterCamp,afterSteps,s,score,allRecovered,outcome){
     const box=$('summary');
     const title=$('summaryTitle');
     const text=$('summaryText');
     const badge=$('summaryBadge');
     const imageText=$('summaryImageText');
     const foot=$('summaryFootnote');
-    const delta=Math.abs(move);
-    const movedLabel=`${delta} ${plural(delta,'acampamento','acampamentos')}`;
     $('sumCorrect').textContent=String(s.correct);
     $('sumWrong').textContent=String(s.wrong);
     $('sumTime').textContent=String(s.timeouts);
-    $('sumMove').textContent=(move>0?'+':'')+String(move);
-    $('sumEffective').textContent=`${climbScore} / ${SESSION_QUESTIONS}`;
-    $('summaryPenalty').textContent=`Pontuação de subida: ${s.correct} certas − ${s.timeouts} ${plural(s.timeouts,'tempo esgotado','tempos esgotados')} = ${s.correct-s.timeouts} (${climbScore} no mínimo 0). As respostas fora de tempo também contam como falhas.`;
-    if(move>0){
-      badge.textContent='Boa subida';
-      badge.style.background='#e9faf1';
-      badge.style.color='#0f6f52';
-      title.textContent='Excelente sessão!';
-      text.textContent=`Acertaste ${s.correct} de ${s.total}. O alpinista subiu ${movedLabel} e chegou ao nível ${after+1}.`;
-      imageText.textContent='O alpinista subiu a montanha.';
-      foot.textContent=after===LEVELS.length-1?'Chegaste ao Topo dos Mestres. Continua a treinar para te manteres lá!':'Continua assim para chegares ao topo dos mestres.';
-      $('summaryClimber').textContent=after===LEVELS.length-1?'🏆':'🧗';
-    }else if(move<0){
-      badge.textContent='Sessão para treinar';
-      badge.style.background='#fff1f1';
-      badge.style.color='#a03646';
-      title.textContent='Hoje foi preciso recuar um pouco';
-      text.textContent=`Acertaste ${s.correct} de ${s.total}. O alpinista desceu ${movedLabel} e ficou no nível ${after+1}.`;
-      imageText.textContent='O alpinista desceu para ganhar força.';
-      foot.textContent='Sem problema. A próxima sessão serve para recuperar terreno.';
+    $('sumRecovered').textContent=`+${s.recoveredPoints}`;
+    const oldAltitude=beforeCamp*STEPS_PER_LEVEL+beforeSteps;
+    const newAltitude=afterCamp*STEPS_PER_LEVEL+afterSteps;
+    const difference=newAltitude-oldAltitude;
+    $('sumMove').textContent=(difference>0?'+':'')+String(difference);
+    $('sumEffective').textContent=`${score} / ${SESSION_QUESTIONS}`;
+    $('summaryPenalty').textContent=`Pontos de subida: ${s.correct} certas − ${s.timeouts} ${plural(s.timeouts,'tempo esgotado','tempos esgotados')} + ${s.recoveredPoints} recuperados = ${score} pontos. Recuperação: ${s.recoveryTasks.filter(t=>t.solved).length} de ${s.recoveryTasks.length} tabuadas completas.`;
+    if(outcome==='upCamp'){
+      badge.textContent='Subida conquistada';
+      badge.style.background='#e9faf1';badge.style.color='#0f6f52';
+      title.textContent='Chegaste a um novo acampamento!';
+      text.textContent=`Já somaste três boas sessões. O alpinista subiu ao nível ${afterCamp+1}: ${LEVELS[afterCamp].name}.`;
+      imageText.textContent='O alpinista alcançou uma zona mais alta da montanha.';
+      foot.textContent=afterCamp===LEVELS.length-1?'Conquistaste o Topo dos Mestres!':'Recomeça a contagem de três bons passos para o próximo acampamento.';
+      $('summaryClimber').textContent=afterCamp===LEVELS.length-1?'🏆':'🧗';
+    }else if(outcome==='upStep'||outcome==='master'){
+      badge.textContent=outcome==='master'?'Topo dos Mestres':'Um passo em frente';
+      badge.style.background='#e9faf1';badge.style.color='#0f6f52';
+      title.textContent=outcome==='master'?'Manténs o lugar de mestre!':'Avançaste um passo na montanha!';
+      text.textContent=outcome==='master'?`Pontuação ${score}/10. Continuas no topo.`:`Boa sessão: ${score}/10. Já tens ${afterSteps} de ${STEPS_PER_LEVEL} passos necessários para chegar ao nível ${afterCamp+2}.`;
+      imageText.textContent=outcome==='master'?'O alpinista continua no cume.':'O alpinista avançou um pouco na encosta.';
+      foot.textContent='A subida é gradual: três boas sessões para conquistar um nível.';
+      $('summaryClimber').textContent=outcome==='master'?'🏆':'🧗';
+    }else if(outcome==='downStep'||outcome==='downCamp'){
+      badge.textContent='Um passo atrás';
+      badge.style.background='#fff1f1';badge.style.color='#a03646';
+      title.textContent='É altura de treinar mais um pouco';
+      text.textContent=outcome==='downCamp'?`Com ${score}/10, o alpinista desceu ao nível ${afterCamp+1}.`:`Com ${score}/10, o alpinista desceu um passo de treino, mas manteve-se no nível ${afterCamp+1}.`;
+      imageText.textContent='O alpinista desceu um pouco para estudar as tabuadas.';
+      foot.textContent='Podes recuperar os passos nas próximas boas sessões.';
       $('summaryClimber').textContent='🥾';
     }else{
-      badge.textContent=intendedMove<0?'No Campo Base':'Mantiveste a posição';
-      badge.style.background='#f4f7fd';
-      badge.style.color='#445770';
-      title.textContent=intendedMove<0?'O alpinista precisa de treinar':'Sessão equilibrada';
-      text.textContent=intendedMove<0?`A pontuação de subida foi ${climbScore}. O alpinista já estava no Campo Base, por isso não pode descer mais.`:`Acertaste ${s.correct} de ${s.total}. O alpinista ficou no mesmo acampamento: nível ${after+1}.`;
-      imageText.textContent='O alpinista manteve a posição.';
-      foot.textContent='Mais uma boa sessão e a subida continua.';
-      $('summaryClimber').textContent='🙂';
+      badge.textContent='Mantiveste a posição';
+      badge.style.background='#f4f7fd';badge.style.color='#445770';
+      title.textContent='Sessão de treino concluída';
+      text.textContent=!allRecovered&&s.recoveryTasks.length?`Ficaram tabuadas por recuperar. O alpinista mantém-se no nível ${afterCamp+1} e precisa de mais treino antes de subir.`:`Pontuação ${score}/10. O alpinista manteve o nível ${afterCamp+1}, com ${afterSteps}/${STEPS_PER_LEVEL} passos de subida.`;
+      imageText.textContent='O alpinista descansou no acampamento.';
+      foot.textContent='Uma sessão de estudo também conta para aprender.';
+      $('summaryClimber').textContent='🧗';
     }
     box.hidden=false;
     box.scrollIntoView({behavior:'smooth',block:'start'});
@@ -796,12 +1010,13 @@ button:disabled{cursor:default;opacity:.6}
     stopTimer();
     stopAdvance();
     try{localStorage.removeItem(APP_KEY);}catch(e){}
-    state={camp:0,bestCamp:0,session:null};
+    state={camp:0,bestCamp:0,steps:0,session:null};
     render();
   }
 
   $('startGame').addEventListener('click',startSession);
-  $('restartSession').addEventListener('click',()=>{if(!state.session||confirm('Terminar a sessão atual e começar uma nova?'))startSession();});
+  $('recoveryForm').addEventListener('submit',submitRecovery);
+  $('restartSession').addEventListener('click',()=>{if(state.session?.phase==='recovery')return;if(!state.session||confirm('Terminar a sessão atual e começar uma nova?'))startSession();});
   $('playAgain').addEventListener('click',startSession);
   $('resetProgress').addEventListener('click',resetAll);
 
