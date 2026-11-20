@@ -3,63 +3,770 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5f7ff">
-<meta name="description" content="Tabuada Quest: um jogo gratuito de multiplicação com cores, símbolos, níveis, pontuação e ajudas visuais. Sem registo.">
-<title>Tabuada Quest — Aprende a multiplicar com cores e símbolos</title>
+<meta name="theme-color" content="#edf3ff">
+<meta name="description" content="Montanha da Tabuada: um jogo gratuito de multiplicação com cronómetro, 20 níveis, cores, símbolos e um alpinista a subir até ao topo dos mestres.">
+<title>Montanha da Tabuada — sobe até ao topo dos mestres</title>
 <style>
-:root{color-scheme:light;--ink:#17243b;--muted:#62718b;--line:#e0e6f2;--panel:#fff;--bg:#f5f7ff;--brand:#5745ce;--brand-soft:#edeafd;--good:#136c4f;--bad:#a93043;--c:#2563eb;--soft:#eaf2ff;--fg:#15459e;--shadow:0 14px 42px #222e5010}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 10% 0%,#e4e8ff 0,transparent 34%),radial-gradient(circle at 100% 10%,#e7f8f5 0,transparent 25%),var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}button:focus-visible{outline:3px solid #121a50;outline-offset:3px}button:disabled{cursor:default}[hidden]{display:none!important}.wrap{width:min(100% - 30px,1000px);margin:auto;padding:23px 0 32px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:23px}.brand{display:flex;align-items:center;gap:12px}.mark{width:47px;height:47px;border-radius:16px;color:#fff;background:#5745ce;display:grid;place-items:center;font-size:29px;font-weight:900;box-shadow:0 7px 18px #5745ce35}.brand strong{display:block;font-size:21px;letter-spacing:-.7px;line-height:1.15}.brand small{display:block;color:var(--muted);font-size:12px}.plain{border:1px solid var(--line);background:white;padding:9px 12px;border-radius:12px;color:var(--ink);font-size:13px;font-weight:750}.intro{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:18px}.eyebrow{color:#5544ba;font-size:11px;text-transform:uppercase;letter-spacing:1.6px;font-weight:850;margin:0 0 6px}h1{font-size:clamp(27px,4.6vw,40px);line-height:1.15;letter-spacing:-1.6px;margin:0}.intro p:last-child{color:var(--muted);font-size:14px;margin:7px 0 0}.record{color:var(--muted);font-size:12px;text-align:right;white-space:nowrap}.record strong{display:block;color:var(--ink);font-size:23px;font-variant-numeric:tabular-nums}.levels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:15px}.level{display:flex;align-items:center;gap:8px;background:#ffffffd9;border:1px solid var(--line);border-radius:14px;padding:10px;min-width:0;color:var(--muted);font-size:12px;line-height:1.16;font-weight:750}.level b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#edf0f7;color:#52617c;font-size:13px;flex-shrink:0}.level.current{background:#ece9fe;border-color:#bfb4f5;color:#4b38ab}.level.current b{background:#5745ce;color:white}.level.done{background:#e9f8ef;color:#156d4c;border-color:#c0e4ce}.level.done b{background:#c9f0dc;color:#166848}.layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:17px;align-items:start}.panel{border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);background:white}.game{padding:clamp(16px,3.6vw,27px)}.stage{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}.tag{background:#ece9fb;color:#4a37a8;border-radius:100px;padding:6px 12px;font-weight:800}.track{height:11px;background:#e9edf5;border-radius:12px;overflow:hidden;margin:13px 0 6px}.fill{height:100%;width:0;background:linear-gradient(90deg,#9c89fb,#5c48dc);transition:width .25s;border-radius:12px}.goal-line{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.goal-line strong{color:#513eba;font-variant-numeric:tabular-nums}.fact{background:var(--soft);border:2px solid var(--c);border-radius:21px;text-align:center;padding:19px 12px 16px;margin:20px 0 13px;transition:background .2s,border-color .2s}.fact-kicker{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--fg);font-size:14px;font-weight:800}.fact-kicker .symbol{font-size:26px;line-height:1}.question{font-size:clamp(50px,9vw,77px);font-weight:900;letter-spacing:-3px;line-height:1.2;color:var(--fg);margin:7px 0 1px;font-variant-numeric:tabular-nums}.story{color:var(--fg);font-size:13px;margin:4px 0 1px;font-weight:650}.assist-row{display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap;margin:12px 0}.assist{border:1px solid var(--c);border-radius:12px;background:var(--soft);padding:8px 12px;color:var(--fg);font-weight:800;font-size:13px}.tiny{font-size:12px;color:var(--muted)}.visual{border:1px solid var(--line);border-radius:16px;padding:13px;background:#fbfcff;margin:0 0 14px}.visual .vtitle{font-weight:850;font-size:13px;margin:0 0 9px}.groups{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}.group{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:2px;padding:5px 7px;border-radius:10px;border:1px solid var(--c);background:var(--soft);min-width:52px;max-width:100%}.token{font-size:clamp(13px,2.1vw,18px);line-height:1.28}.vfooter{text-align:center;color:var(--muted);font-size:12px;margin:11px 0 1px}.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.answer{border:2px solid #dce3ef;background:#fafbff;min-height:76px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;position:relative;color:var(--ink);font-size:clamp(27px,5vw,35px);font-weight:900;transition:transform .15s,border-color .15s,background .15s}.answer .key{position:absolute;top:9px;left:10px;padding:2px 6px;border-radius:6px;background:#e8edf6;color:#60708a;font-size:10px}.answer:not(:disabled):hover{transform:translateY(-2px);border-color:var(--c);background:var(--soft)}.answer.right{border-color:#27a779;background:#e6f9ee;color:#116446}.answer.wrong{border-color:#e28b92;background:#fff0f2;color:#9c2d41}.answer .answer-icon{position:absolute;right:12px;font-size:18px}.answer.right .answer-icon{color:#116446}.answer.wrong .answer-icon{color:#9c2d41}.feedback{min-height:48px;display:flex;align-items:center;font-size:14px;line-height:1.45;font-weight:750;padding:11px 2px 8px;color:var(--muted)}.feedback.good{color:var(--good)}.feedback.bad{color:var(--bad)}.insight{border-left:4px solid var(--c);padding:8px 12px;background:var(--soft);color:var(--fg);font-size:13px;font-weight:650;border-radius:0 10px 10px 0;margin:1px 0 14px}.primary{background:#5745ce;border:none;border-radius:13px;color:white;width:100%;min-height:50px;padding:13px;font-weight:850}.primary:not(:disabled):hover{background:#4131ab}.primary:disabled{background:#e9ebf0;color:#68768e}.aside{padding:19px}.aside h2{font-size:17px;letter-spacing:-.4px;margin:0 0 13px}.score{background:#f0edff;border-radius:15px;padding:13px 16px;color:#4939a8;margin-bottom:13px}.score span{font-size:12px;font-weight:750}.score strong{display:block;font-size:42px;line-height:1.12;font-variant-numeric:tabular-nums}.score small{font-size:11px}.stat{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #edf0f6;padding:11px 0;color:var(--muted);font-size:13px}.stat b{color:var(--ink);font-size:17px;font-variant-numeric:tabular-nums}.stat:last-of-type{border-bottom:0}.hint{background:#f8f9fc;border-radius:13px;padding:12px;margin:15px 0 0;color:var(--muted);font-size:12px}.hint strong{display:block;color:var(--ink);margin-bottom:4px}.legend{margin-top:17px}.legend h2{font-size:16px;margin:0 0 10px}.palette{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.pal{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:7px 3px;background:var(--soft);border:2px solid transparent;border-radius:12px;color:var(--fg);font-size:11px;font-weight:850}.pal .picon{font-size:22px}.pal.active{border-color:var(--c);box-shadow:0 1px 0 var(--c)}.palette-label{font-size:12px;color:var(--muted);margin:10px 0 0}.foot{margin:18px 0 0;text-align:center;color:var(--muted);font-size:12px}.complete{text-align:center;padding:29px 6px 16px}.medal{display:grid;place-items:center;width:77px;height:77px;border-radius:26px;margin:0 auto 16px;background:#eeeaff;font-size:40px}.complete h2{font-size:28px;line-height:1.2;letter-spacing:-.9px;margin:0 0 8px}.complete p{margin:0 0 18px;color:var(--muted)}.complete .primary{max-width:400px}.sr{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:810px){.layout{grid-template-columns:1fr}.aside{display:grid;grid-template-columns:1fr 1fr;gap:0 13px}.aside h2,.hint{grid-column:1/-1}.score{grid-row:2/4;display:flex;flex-direction:column;justify-content:center;margin-bottom:0}.stat{padding:8px 0}.stat.accuracy{grid-column:1/-1}}@media(max-width:580px){.wrap{width:calc(100% - 22px);padding-top:14px}.top{margin-bottom:15px}.levels{gap:5px}.level{flex-direction:column;gap:4px;padding:7px 2px;font-size:10px;text-align:center}.level b{width:25px;height:25px}.intro{align-items:start}.record strong{font-size:19px}.palette{grid-template-columns:repeat(5,1fr)}.pal{padding:6px 2px}.pal .picon{font-size:19px}.game{padding:15px}.question{font-size:57px}.fact{margin-top:16px}.answer{min-height:69px}.story{font-size:12px}}@media(max-width:360px){.brand strong{font-size:18px}.record{font-size:10px}.record strong{font-size:17px}.question{font-size:48px}.tag{font-size:11px}.level{font-size:9px}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+:root{
+  color-scheme:light;
+  --bg:#edf3ff;--panel:#ffffff;--ink:#17304d;--muted:#667892;--line:#d9e3f1;--brand:#4f46e5;
+  --brand-soft:#ebe9ff;--good:#0e7a58;--bad:#b63d4f;--warn:#d97706;--shadow:0 18px 45px rgba(21,33,74,.12);
+  --accent:#2563eb;--accent-soft:#eaf2ff;--accent-text:#1747a2;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 0% 0%,#dce5ff 0,transparent 28%),
+    radial-gradient(circle at 100% 15%,#e2fbf3 0,transparent 24%),
+    linear-gradient(180deg,#edf3ff 0%,#f7faff 100%);
+  min-height:100vh;color:var(--ink);
+  font:16px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid #0f1f44;outline-offset:3px}
+button:disabled{cursor:default;opacity:.6}
+[hidden]{display:none!important}
+.wrap{width:min(1120px,calc(100% - 28px));margin:auto;padding:20px 0 34px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{
+  width:52px;height:52px;border-radius:18px;display:grid;place-items:center;
+  background:linear-gradient(135deg,#5b5cf0,#7f84ff);color:#fff;font-size:28px;box-shadow:0 12px 28px rgba(79,70,229,.25)
+}
+.brand strong{display:block;font-size:1.08rem}
+.brand small{display:block;color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn,.plain{
+  border:0;border-radius:14px;padding:12px 16px;font-weight:700;
+}
+.btn{background:var(--brand);color:#fff;box-shadow:0 10px 24px rgba(79,70,229,.22)}
+.btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.plain{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.hero{
+  display:grid;grid-template-columns:1.3fr .9fr;gap:18px;margin-bottom:18px
+}
+.hero-card,.rule-card,.panel,.summary,.levels{background:var(--panel);border:1px solid rgba(217,227,241,.75);border-radius:28px;box-shadow:var(--shadow)}
+.hero-card{padding:24px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:var(--brand-soft);color:#4037b8;font-size:.92rem;font-weight:700;margin-bottom:12px}
+.hero-card h1{font-size:clamp(1.9rem,3.8vw,3rem);line-height:1.05;margin:.15rem 0 .7rem}
+.hero-card p{margin:.35rem 0;color:#445770;font-size:1.02rem}
+.hero-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}
+.mini{padding:15px 14px;border-radius:20px;background:#f8faff;border:1px solid var(--line)}
+.mini strong{display:block;font-size:1.35rem;margin-top:2px}
+.mini span{display:block;color:var(--muted);font-size:.92rem}
+.rule-card{padding:20px}
+.rule-card h2{margin:0 0 10px;font-size:1.1rem}
+.rule-card ol{margin:0;padding-left:18px;color:#445770}
+.rule-card li+li{margin-top:8px}
+.levels{padding:18px;margin-bottom:18px}
+.levels h2{margin:0 0 14px;font-size:1.08rem}
+.level-track{display:grid;grid-template-columns:repeat(20,minmax(44px,1fr));gap:8px;overflow:auto;padding-bottom:4px}
+.level-pill{min-width:44px;padding:10px 0;border-radius:16px;border:1px solid var(--line);background:#f8fbff;color:#5c6f89;text-align:center;font-weight:800}
+.level-pill.current{background:var(--brand);border-color:var(--brand);color:#fff}
+.level-pill.done{background:#e9faf1;border-color:#c4ead6;color:#0f6f52}
+.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:18px;align-items:start}
+.panel{padding:20px}
+.stage{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.tag{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:var(--accent-soft);color:var(--accent-text);font-weight:700}
+.session-line{display:flex;gap:12px;align-items:center;flex-wrap:wrap;color:var(--muted);font-weight:600}
+.progress-wrap{margin:16px 0 10px}
+.progress-head{display:flex;justify-content:space-between;gap:10px;align-items:center;font-weight:700;margin-bottom:8px}
+.track{height:14px;border-radius:999px;background:#ecf1f8;overflow:hidden;border:1px solid #e3eaf5}
+.fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#7ba8ff);transition:width .35s ease}
+.timer-fill{background:linear-gradient(90deg,#3db6ff,#2563eb)}
+.timer-fill.warn{background:linear-gradient(90deg,#ffb454,#d97706)}
+.timer-fill.danger{background:linear-gradient(90deg,#ff8b92,#d9485d)}
+.question-card{
+  border-radius:26px;padding:20px;border:1px solid var(--line);
+  background:linear-gradient(180deg,var(--accent-soft) 0,#fff 82%);
+}
+.question-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:18px;background:#fff;border:1px solid rgba(255,255,255,.65);box-shadow:0 8px 24px rgba(30,41,59,.06);font-weight:800}
+.symbol{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:#fff;font-size:1.2rem;box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}
+.fact{font-size:clamp(2rem,6vw,3.25rem);font-weight:900;letter-spacing:-.04em;margin:12px 0 8px}
+.helper{font-size:1.04rem;color:#425670;margin:0 0 14px}
+.visual-area{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:10px;margin-bottom:14px}
+.group{border:1px dashed rgba(23,48,77,.18);background:rgba(255,255,255,.68);border-radius:18px;padding:10px;min-height:72px}
+.group-label{display:block;font-size:.8rem;color:#5a6d86;font-weight:700;margin-bottom:6px}
+.tokens{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start}
+.token{font-size:1rem;line-height:1}
+.more{display:inline-flex;align-items:center;justify-content:center;padding:3px 7px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:.76rem;color:#51657d;font-weight:700}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.option{
+  text-align:left;padding:15px 16px;border-radius:18px;border:2px solid transparent;background:#fff;color:var(--ink);font-weight:800;
+  box-shadow:0 10px 20px rgba(30,41,59,.06);transition:transform .12s ease, border-color .12s ease, box-shadow .12s ease
+}
+.option:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 14px 24px rgba(30,41,59,.1)}
+.option.correct{border-color:#79d2b3;background:#f0fff8;color:#0a6f50}
+.option.wrong{border-color:#ff9dab;background:#fff3f5;color:#a53649}
+.option.dim{opacity:.72}
+.feedback{margin-top:14px;padding:14px 15px;border-radius:18px;background:#f7faff;border:1px solid var(--line);min-height:64px}
+.feedback strong{display:block;margin-bottom:4px}
+.tip{margin-top:12px;padding:12px 14px;border-radius:18px;background:#fff;border:1px solid var(--line);color:#48607b}
+.side{display:grid;gap:18px}
+.mountain{padding:20px;position:relative;overflow:hidden}
+.mountain h2,.summary h2{margin:0 0 10px}
+.mountain-topline{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.peak-label{font-weight:800;color:#4037b8;background:var(--brand-soft);padding:8px 12px;border-radius:999px}
+.mountain-visual{
+  position:relative;height:420px;border-radius:28px;overflow:hidden;
+  background:linear-gradient(180deg,#dff1ff 0,#eef7ff 38%,#f8fbff 100%);
+  border:1px solid var(--line)
+}
+.sun{position:absolute;right:24px;top:22px;width:56px;height:56px;border-radius:50%;background:#ffda75;box-shadow:0 0 0 12px rgba(255,218,117,.22)}
+.cloud,.cloud:before,.cloud:after{position:absolute;background:#fff;border-radius:999px}
+.cloud{width:68px;height:22px;left:34px;top:40px;opacity:.92}
+.cloud:before{content:"";width:32px;height:32px;left:10px;top:-14px}.cloud:after{content:"";width:28px;height:28px;right:12px;top:-10px}
+.cloud.two{left:auto;right:88px;top:80px;transform:scale(.9)}
+.mountain-shape{
+  position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:92%;height:82%;
+  clip-path:polygon(12% 100%,33% 52%,44% 68%,57% 34%,67% 49%,86% 100%);
+  background:linear-gradient(180deg,#90a9c8 0,#617da2 44%,#445e84 100%);
+}
+.mountain-snow{
+  position:absolute;left:50%;top:86px;transform:translateX(-50%);width:32%;height:19%;
+  clip-path:polygon(50% 0,64% 24%,76% 54%,69% 60%,59% 48%,50% 68%,40% 51%,29% 66%,23% 56%,35% 24%);
+  background:#fff;box-shadow:0 6px 12px rgba(255,255,255,.48)
+}
+.path{position:absolute;left:50%;top:72px;transform:translateX(-50%);width:72%;height:300px}
+.path-line{position:absolute;left:50%;top:0;transform:translateX(-50%);width:12px;height:100%;border-radius:999px;background:linear-gradient(180deg,#ffffff90,#ffe8a2 28%,#ffd267 68%,#ffb703 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)}
+.camp{position:absolute;left:50%;transform:translate(-50%,50%);display:flex;align-items:center;gap:8px;pointer-events:none}
+.camp i{display:block;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #ffca5f;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.camp span{font-size:.72rem;font-weight:800;background:#ffffffd6;padding:4px 7px;border-radius:999px;color:#5f6f84}
+.climber{
+  position:absolute;left:50%;transform:translate(-50%,50%);font-size:32px;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.18));transition:bottom .45s ease
+}
+.mountain-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.stat{padding:14px;border-radius:20px;background:#f8fbff;border:1px solid var(--line)}
+.stat strong{display:block;font-size:1.2rem}
+.stat span{display:block;color:var(--muted);font-size:.92rem}
+.palette{padding:18px}
+.palette-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(122px,1fr));gap:10px}
+.palette-item{border-radius:18px;padding:12px;border:1px solid var(--line)}
+.palette-item strong{display:block}
+.palette-item small{color:#51657d}
+.summary{padding:22px;margin-top:18px}
+.summary-card{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:center}
+.summary-visual{padding:16px;border-radius:24px;background:linear-gradient(180deg,#ecf7ff,#ffffff);border:1px solid var(--line);text-align:center}
+.summary-climber{font-size:3rem;display:block;margin-top:8px}
+.summary-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-weight:800;background:#f6f8fd;color:#40516a}
+.summary-text p{margin:.35rem 0;color:#445770}
+.summary-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
+.result{padding:12px;border-radius:18px;background:#f8fbff;border:1px solid var(--line)}
+.result strong{display:block;font-size:1.15rem}
+.footnote{margin-top:12px;color:#60728b;font-size:.95rem}
+@media (max-width:980px){
+  .hero,.layout,.summary-card{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .hero-grid,.summary-list,.mountain-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .options{grid-template-columns:1fr}
+  .wrap{width:min(100% - 18px,1120px)}
+  .panel,.mountain,.palette,.summary,.levels,.hero-card,.rule-card{border-radius:24px}
+}
+@media (max-width:520px){
+  .hero-grid,.summary-list,.mountain-stats{grid-template-columns:1fr}
+  .fact{font-size:2.2rem}
+  .mountain-visual{height:350px}
+}
 </style>
 </head>
 <body>
 <main class="wrap">
-<header class="top"><div class="brand"><div class="mark" aria-hidden="true">×</div><div><strong>Tabuada Quest</strong><small>Multiplicar com cores e símbolos</small></div></div><button class="plain" type="button" id="reset">Recomeçar</button></header>
-<section class="intro"><div><p class="eyebrow">Aprender a brincar · Sem cronómetro</p><h1>A missão da tabuada</h1><p>Descobre a resposta, junta pontos e sobe de nível.</p></div><div class="record">Recorde pessoal<strong id="best">0 pts</strong></div></section>
-<nav class="levels" id="levels" aria-label="Os cinco níveis do desafio"></nav>
-<div class="layout"><section class="panel game" aria-label="Jogo de multiplicação"><div id="play"><div class="stage"><span class="tag" id="stage"></span><span id="tables"></span></div><div id="progress" class="track" role="progressbar" aria-label="Progresso do nível" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill" id="fill"></div></div><div class="goal-line"><span>Meta deste nível</span><strong id="goal"></strong></div><div class="fact" id="fact"><div class="fact-kicker"><span class="symbol" id="symbol" aria-hidden="true"></span><span id="tableName"></span></div><h2 class="question" id="question" tabindex="-1"></h2><p class="story" id="story"></p></div><div class="assist-row"><button class="assist" id="assist" type="button" aria-expanded="false" aria-controls="visual">Ver os grupos desenhados</button><span class="tiny" id="assistNote">Usa os desenhos se precisares.</span></div><section class="visual" id="visual" hidden aria-label="Ajuda visual para a multiplicação"><p class="vtitle" id="vtitle"></p><div class="groups" id="groups" aria-hidden="true"></div><p class="vfooter" id="vfooter"></p></section><div class="answers" id="answers" role="group" aria-label="Quatro respostas possíveis"></div><div class="feedback" id="feedback" role="status" aria-live="polite">Cada resposta certa vale 10 pontos.</div><div class="insight" id="insight" hidden></div><button class="primary" id="next" type="button" disabled>Próxima pergunta →</button></div><div class="complete" id="complete" hidden><div class="medal" aria-hidden="true">🏆</div><h2 id="completeTitle" tabindex="-1"></h2><p id="completeText"></p><button class="primary" id="continue" type="button"></button></div></section>
-<aside class="panel aside"><h2>Os teus pontos</h2><div class="score"><span>Total conquistado</span><strong id="score">0</strong><small id="totalGoal">de 720 pontos</small></div><div class="stat"><span>Respostas certas</span><b id="correct">0</b></div><div class="stat"><span>Certas seguidas</span><b id="streak">0</b></div><div class="stat accuracy"><span>Precisão</span><b id="accuracy">—</b></div><div class="hint"><strong>Uma pequena estratégia</strong><span id="tip"></span></div></aside></div>
-<section class="legend"><h2>Uma cor e um símbolo para cada tabuada</h2><div class="palette" id="palette" aria-label="Código de cores das tabuadas"></div><p class="palette-label">A cor ajuda a reconhecer a tabuada. O símbolo e o número confirmam qual é, mesmo sem distinguir as cores.</p></section>
-<p class="foot">Jogo gratuito · Sem registo · Sem publicidade · O progresso fica guardado neste navegador, quando permitido.</p>
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">🧗</div>
+      <div>
+        <strong>Montanha da Tabuada</strong>
+        <small>Cores, símbolos, tempo e um alpinista rumo ao topo dos mestres</small>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="plain" type="button" id="resetProgress">Apagar progresso</button>
+      <button class="btn secondary" type="button" id="restartSession">Nova sessão</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <article class="hero-card">
+      <div class="eyebrow">⏱️ Cada resposta tem tempo · 20 níveis</div>
+      <h1>Sobe a montanha com a tabuada.</h1>
+      <p>Acerta nas multiplicações antes do tempo acabar. Cada nível fica um pouco mais rápido. Se a sessão correr bem, o alpinista sobe. Se correr mal, desce para voltar a treinar.</p>
+      <div class="hero-grid">
+        <div class="mini"><span>Nível atual</span><strong id="heroLevel">1 / 20</strong></div>
+        <div class="mini"><span>Tempo por pergunta</span><strong id="heroTime">15 s</strong></div>
+        <div class="mini"><span>Perguntas por sessão</span><strong id="heroQuestions">10</strong></div>
+        <div class="mini"><span>Melhor subida</span><strong id="heroBest">Nível 1</strong></div>
+      </div>
+    </article>
+    <aside class="rule-card">
+      <h2>Como sobe o alpinista</h2>
+      <ol>
+        <li><strong>9 ou 10 certas</strong> → sobe <strong>2 acampamentos</strong>.</li>
+        <li><strong>7 ou 8 certas</strong> → sobe <strong>1 acampamento</strong>.</li>
+        <li><strong>5 ou 6 certas</strong> → <strong>mantém-se</strong>.</li>
+        <li><strong>3 ou 4 certas</strong> → desce <strong>1 acampamento</strong>.</li>
+        <li><strong>0 a 2 certas</strong> → desce <strong>2 acampamentos</strong>.</li>
+      </ol>
+      <p class="footnote">Cada tabuada tem uma cor e um símbolo fixos para ajudar a memória visual da criança.</p>
+    </aside>
+  </section>
+
+  <section class="levels">
+    <h2>Trilho dos 20 níveis</h2>
+    <div class="level-track" id="levelTrack" aria-label="Níveis da montanha"></div>
+  </section>
+
+  <div class="layout">
+    <section class="panel" aria-label="Jogo da tabuada">
+      <div class="stage">
+        <div class="tag" id="levelBadge">Nível 1 · Campo Base</div>
+        <div class="session-line">
+          <span id="questionCounter">Pergunta 1 de 10</span>
+          <span id="levelDesc">Tabuadas do 2 e do 3</span>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-head"><span>Progresso da sessão</span><strong id="sessionScore">0 certas</strong></div>
+        <div class="track" aria-hidden="true"><div class="fill" id="sessionFill"></div></div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-head"><span>Tempo para responder</span><strong id="timerText">15 s</strong></div>
+        <div class="track" aria-hidden="true"><div class="fill timer-fill" id="timerFill"></div></div>
+      </div>
+
+      <article class="question-card" id="questionCard">
+        <div class="question-top">
+          <div>
+            <div class="chip" id="tableChip"><span class="symbol" id="tableSymbol">💧</span><span id="tableName">Tabuada do 2 · azul · gotas</span></div>
+            <div class="fact" id="fact">2 × 4 = ?</div>
+            <p class="helper" id="helper">Pensa assim: 2 grupos com 4 gotas em cada grupo.</p>
+          </div>
+          <div class="chip" id="meaningChip">Conta por grupos</div>
+        </div>
+        <div class="visual-area" id="visualArea" aria-label="Representação visual da multiplicação"></div>
+        <div class="options" id="options"></div>
+      </article>
+
+      <div class="feedback" id="feedback" aria-live="polite">
+        <strong>Vamos começar!</strong>
+        Escolhe a resposta certa antes do tempo acabar.
+      </div>
+
+      <div class="tip" id="tip">Dica: começa por contar os grupos e depois pensa em saltos iguais.</div>
+    </section>
+
+    <aside class="side">
+      <section class="mountain hero-card mountain" aria-label="Montanha do alpinista">
+        <div class="mountain-topline">
+          <h2>A subida do alpinista</h2>
+          <div class="peak-label">Topo dos Mestres</div>
+        </div>
+        <div class="mountain-visual">
+          <div class="sun" aria-hidden="true"></div>
+          <div class="cloud" aria-hidden="true"></div>
+          <div class="cloud two" aria-hidden="true"></div>
+          <div class="mountain-shape" aria-hidden="true"></div>
+          <div class="mountain-snow" aria-hidden="true"></div>
+          <div class="path" id="path">
+            <div class="path-line" aria-hidden="true"></div>
+            <div class="climber" id="climber" aria-hidden="true">🧗</div>
+          </div>
+        </div>
+        <div class="mountain-stats">
+          <div class="stat"><strong id="campNow">Campo Base</strong><span>Posição atual</span></div>
+          <div class="stat"><strong id="campBest">Campo Base</strong><span>Melhor posição</span></div>
+          <div class="stat"><strong id="toTop">19 passos</strong><span>Até ao topo</span></div>
+          <div class="stat"><strong id="levelTime">15 s</strong><span>Tempo neste nível</span></div>
+        </div>
+      </section>
+
+      <section class="panel palette" aria-label="Cores e símbolos das tabuadas">
+        <h2>Mapa visual das tabuadas</h2>
+        <div class="palette-grid" id="paletteGrid"></div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="summary" id="summary" hidden>
+    <h2>Fim da sessão</h2>
+    <div class="summary-card">
+      <div class="summary-visual">
+        <div class="summary-badge" id="summaryBadge">Boa subida</div>
+        <span class="summary-climber" id="summaryClimber">🧗</span>
+        <p id="summaryImageText">O alpinista subiu a montanha.</p>
+      </div>
+      <div class="summary-text">
+        <h3 id="summaryTitle">Sessão terminada</h3>
+        <p id="summaryText">Resumo da tua sessão.</p>
+        <div class="summary-list">
+          <div class="result"><strong id="sumCorrect">0</strong><span>Certas</span></div>
+          <div class="result"><strong id="sumWrong">0</strong><span>Erradas</span></div>
+          <div class="result"><strong id="sumTime">0</strong><span>Sem tempo</span></div>
+          <div class="result"><strong id="sumMove">0</strong><span>Acampamentos</span></div>
+        </div>
+        <p class="footnote" id="summaryFootnote">Prepara-te para a próxima sessão.</p>
+        <div class="actions" style="margin-top:12px">
+          <button class="btn" type="button" id="playAgain">Jogar nova sessão</button>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
+
 <script>
-(()=>{'use strict';
-const colorMap={
-2:{name:'Gotas',icon:'💧',single:'gota',plural:'gotas',color:'#2563eb',soft:'#eaf2ff',text:'#174aa7'},
-3:{name:'Estrelas',icon:'⭐',single:'estrela',plural:'estrelas',color:'#d6a000',soft:'#fff8d8',text:'#785500'},
-4:{name:'Folhas',icon:'🍀',single:'folha',plural:'folhas',color:'#188a55',soft:'#e5f8ef',text:'#08603c'},
-5:{name:'Corações',icon:'❤️',single:'coração',plural:'corações',color:'#d44254',soft:'#ffebee',text:'#9d283a'},
-6:{name:'Luas',icon:'🌙',single:'lua',plural:'luas',color:'#8150c7',soft:'#f2eafe',text:'#59318d'},
-7:{name:'Sóis',icon:'☀️',single:'sol',plural:'sóis',color:'#d97013',soft:'#fff0de',text:'#924307'},
-8:{name:'Peixes',icon:'🐟',single:'peixe',plural:'peixes',color:'#00899c',soft:'#e0f7fa',text:'#00616f'},
-9:{name:'Flores',icon:'🌸',single:'flor',plural:'flores',color:'#c44590',soft:'#ffe9f5',text:'#8e2362'},
-10:{name:'Diamantes',icon:'💎',single:'diamante',plural:'diamantes',color:'#4d54ba',soft:'#ededff',text:'#33398b'}
-};
-const levels=[
-{name:'Despertar',tables:[2,3,4,5],min:3,max:10,goal:100,tip:'Conta por saltos. Na tabuada do 3: 3, 6, 9, 12…'},
-{name:'Explorar',tables:[4,5,6],min:4,max:11,goal:120,tip:'A tabuada do 6 é a do 5 mais uma vez o mesmo número.'},
-{name:'Avançar',tables:[6,7,8],min:4,max:12,goal:140,tip:'7 × 8 pode ser 7 × 4, duas vezes.'},
-{name:'Superar',tables:[7,8,9],min:5,max:12,goal:160,tip:'Para multiplicar por 9, multiplica por 10 e tira uma vez o número.'},
-{name:'Mestre',tables:[2,3,4,5,6,7,8,9,10],min:5,max:12,goal:200,tip:'A ordem não altera o resultado: 8 × 6 é igual a 6 × 8.'}
-];
-const TOTAL=levels.reduce((n,l)=>n+l.goal,0),KEY='tabuada-quest-cores-v2',OLD='tabuada.quest.v1';const $=id=>document.getElementById(id);const fresh=(best=0)=>({level:0,points:0,score:0,correct:0,attempts:0,streak:0,best,phase:'question',q:null,selected:null,pool:[],retry:[],last:'',showVisual:false});let s=fresh();
-try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&Number.isInteger(saved.level)&&saved.level>=0&&saved.level<levels.length&&['question','answered','levelup','finished'].includes(saved.phase)&&['points','score','correct','attempts','streak','best'].every(k=>Number.isFinite(saved[k])&&saved[k]>=0)&&Array.isArray(saved.pool)&&Array.isArray(saved.retry)){s={...fresh(),...saved}}else{const previous=JSON.parse(localStorage.getItem(OLD)||'null');if(previous&&Number.isFinite(previous.best))s.best=Math.max(0,previous.best)}}catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}};
-const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-const buildPool=()=>{const l=levels[s.level];return shuffle(l.tables.flatMap(a=>Array.from({length:l.max-l.min+1},(_,i)=>[a,i+l.min])))};
-function newQuestion(){if(!s.pool.length)s.pool=buildPool();let task;if(s.retry.length&&Math.random()<0.35){task=s.retry.shift()}else{task=s.pool.pop()}if(!task)task=s.retry.shift()||buildPool()[0];if(task.join('x')===s.last&&s.pool.length){s.pool.unshift(task);task=s.pool.pop()}const [a,b]=task,right=a*b;s.last=task.join('x');let candidates=shuffle([right+a,right-a,right+b,right-b,right+10,right-10,right+1,right-1,a*(b+1),a*(b-1),(a+1)*b,(a-1)*b]);const opts=[right];for(const n of candidates){if(n>0&&n<=144&&!opts.includes(n))opts.push(n);if(opts.length===4)break}while(opts.length<4){let n=1+Math.floor(Math.random()*120);if(!opts.includes(n))opts.push(n)}s.q={a,b,right,opts:shuffle(opts)};s.selected=null;s.phase='question';s.showVisual=false;save()}
-function applyTableColor(a){const c=colorMap[a];for(const [key,val] of Object.entries({'--c':c.color,'--soft':c.soft,'--fg':c.text}))$('fact').style.setProperty(key,val);$('visual').style.setProperty('--c',c.color);$('visual').style.setProperty('--soft',c.soft);$('visual').style.setProperty('--fg',c.text);$('assist').style.setProperty('--c',c.color);$('assist').style.setProperty('--soft',c.soft);$('assist').style.setProperty('--fg',c.text);$('insight').style.setProperty('--c',c.color);$('insight').style.setProperty('--soft',c.soft);$('insight').style.setProperty('--fg',c.text)}
-function renderVisual(){const q=s.q,c=colorMap[q.a];$('visual').hidden=!s.showVisual;$('assist').textContent=s.showVisual?'Esconder os desenhos':'Ver os grupos desenhados';$('assist').setAttribute('aria-expanded',String(s.showVisual));if(!s.showVisual)return;$('vtitle').textContent=`${q.a} grupos com ${q.b} ${c.plural} em cada grupo`;$('groups').replaceChildren();for(let i=0;i<q.a;i++){const group=document.createElement('div');group.className='group';group.setAttribute('aria-label',`Grupo ${i+1}: ${q.b} ${c.plural}`);for(let j=0;j<q.b;j++){const token=document.createElement('span');token.className='token';token.textContent=c.icon;group.append(token)}$('groups').append(group)}$('vfooter').textContent=s.phase==='answered'?`Ao todo: ${q.a} × ${q.b} = ${q.right} ${c.plural}.`:'Conta os grupos: cada caixa tem o mesmo número de símbolos.'}
-function renderPalette(){const current=s.q?.a;const el=$('palette');el.replaceChildren();for(const [n,v] of Object.entries(colorMap)){const b=document.createElement('div');b.className='pal'+(Number(n)===current?' active':'');b.style.setProperty('--soft',v.soft);b.style.setProperty('--fg',v.text);b.style.setProperty('--c',v.color);b.setAttribute('aria-label',`Tabuada do ${n}: ${v.name.toLowerCase()}, cor associada`);const icon=document.createElement('span');icon.className='picon';icon.setAttribute('aria-hidden','true');icon.textContent=v.icon;const title=document.createElement('span');title.textContent='× '+n;b.append(icon,title);el.append(b)}}
-function render(){const l=levels[s.level];$('best').textContent=s.best+' pts';$('score').textContent=s.score;$('totalGoal').textContent='de '+TOTAL+' pontos';$('correct').textContent=s.correct;$('streak').textContent=s.streak;$('accuracy').textContent=s.attempts?Math.round(s.correct/s.attempts*100)+'%':'—';$('tip').textContent=l.tip;$('levels').replaceChildren();levels.forEach((level,i)=>{const d=document.createElement('div'),done=i<s.level||(i===s.level&&(s.phase==='levelup'||s.phase==='finished'));d.className='level'+(done?' done':i===s.level?' current':'');if(i===s.level)d.setAttribute('aria-current','step');const b=document.createElement('b');b.textContent=done?'✓':i+1;const t=document.createElement('span');t.textContent=level.name;d.append(b,t);d.setAttribute('aria-label',`Nível ${i+1}: ${level.name}${done?', concluído':''}`);$('levels').append(d)});
-const completed=s.phase==='levelup'||s.phase==='finished';$('play').hidden=completed;$('complete').hidden=!completed;if(completed){const final=s.phase==='finished';$('completeTitle').textContent=final?'Conquistaste a tabuada!':'Missão '+(s.level+1)+' cumprida!';$('completeText').textContent=final?`Chegaste aos ${s.score} pontos. A tua precisão foi ${s.attempts?Math.round(100*s.correct/s.attempts):100}%. Queres tentar bater o recorde?`:`Ganhaste ${l.goal} pontos neste nível. Estás pronto para desafios ainda maiores?`;$('continue').textContent=final?'Jogar novamente':'Avançar para o nível '+(s.level+2);renderPalette();return}
-if(!s.q)newQuestion();const {a,b,right}=s.q,c=colorMap[a];applyTableColor(a);$('stage').textContent='Nível '+(s.level+1)+' · '+l.name;$('tables').textContent='Tabuadas: '+l.tables.join(' · ');const percent=Math.min(100,Math.round(100*s.points/l.goal));$('fill').style.width=percent+'%';$('progress').setAttribute('aria-valuenow',String(percent));$('goal').textContent=s.points+' / '+l.goal+' pts';$('symbol').textContent=c.icon;$('tableName').textContent=`Tabuada do ${a} · ${c.name}`;$('question').textContent=`${a} × ${b} = ?`;$('story').textContent=`Imagina ${a} grupos com ${b} ${c.plural} em cada um.`;renderVisual();renderPalette();$('answers').replaceChildren();const answered=s.phase==='answered';s.q.opts.forEach((n,i)=>{const button=document.createElement('button');button.type='button';button.className='answer';button.disabled=answered;button.setAttribute('aria-label',`Opção ${i+1}: ${n}`);const key=document.createElement('span');key.className='key';key.textContent=i+1;key.setAttribute('aria-hidden','true');const number=document.createElement('span');number.textContent=n;button.append(key,number);if(answered&&(n===right||n===s.selected)){const ic=document.createElement('span');ic.className='answer-icon';ic.setAttribute('aria-hidden','true');if(n===right){button.classList.add('right');ic.textContent='✓';button.setAttribute('aria-label',`${n}, resposta certa`)}else{button.classList.add('wrong');ic.textContent='✕';button.setAttribute('aria-label',`${n}, resposta errada`)}button.append(ic)}button.addEventListener('click',()=>answer(n));$('answers').append(button)});
-const f=$('feedback');$('insight').hidden=!answered;if(answered){const good=s.selected===right;f.className='feedback '+(good?'good':'bad');f.textContent=good?(s.points>=l.goal?'Muito bem! +10 pontos. Meta atingida!':'Acertaste! +10 pontos.'):`Ainda não. A resposta é ${right}. Aprende com os grupos e tenta outra!`;$('insight').textContent=`${a} grupos de ${b} fazem ${right}. Também podes pensar: ${a} × ${b} = ${b} × ${a}.`}else{f.className='feedback';f.textContent='Escolhe uma das quatro respostas. Cada acerto vale 10 pontos.'}$('next').disabled=!answered;$('next').textContent=answered&&s.points>=l.goal?'Ver resultado →':'Próxima pergunta →'
-}
-function answer(n){if(s.phase!=='question'||!s.q.opts.includes(n))return;s.selected=n;s.attempts++;if(n===s.q.right){s.correct++;s.streak++;s.points+=10;s.score+=10;s.best=Math.max(s.best,s.score)}else{s.streak=0;s.retry.push([s.q.a,s.q.b]);if(s.retry.length>25)s.retry.shift();s.showVisual=true}s.phase='answered';save();render();$('next').focus()}
-function next(){if(s.phase!=='answered')return;if(s.points>=levels[s.level].goal){s.phase=s.level===levels.length-1?'finished':'levelup';save();render();$('completeTitle').focus()}else{newQuestion();render();$('question').focus()}}
-function restart(){s=fresh(s.best);newQuestion();render();$('question').focus()}
-$('assist').addEventListener('click',()=>{if(!s.q||!['question','answered'].includes(s.phase))return;s.showVisual=!s.showVisual;save();renderVisual()});$('next').addEventListener('click',next);$('continue').addEventListener('click',()=>{if(s.phase==='finished'){restart();return}if(s.phase!=='levelup')return;s.level++;s.points=0;s.pool=[];s.retry=[];s.last='';newQuestion();render();$('question').focus()});$('reset').addEventListener('click',()=>{if(!s.attempts||confirm('Recomeçar no nível 1? O recorde pessoal será mantido.'))restart()});document.addEventListener('keydown',e=>{if(e.repeat||e.altKey||e.ctrlKey||e.metaKey)return;if(s.phase==='question'&&/^[1-4]$/.test(e.key)){e.preventDefault();answer(s.q.opts[Number(e.key)-1])}});
-if(!s.q||!Array.isArray(s.q.opts)||s.q.opts.length!==4||!Number.isInteger(s.q.a)||!colorMap[s.q.a]){s=fresh(s.best);newQuestion()}render();
+(()=>{
+  'use strict';
+
+  const APP_KEY='montanha_tabuada_v3';
+  const SESSION_QUESTIONS=10;
+  const TABLES={
+    2:{name:'Tabuada do 2', color:'#2563eb', soft:'#eaf2ff', text:'#174aa7', icon:'💧', thing:'gotas', one:'gota', theme:'azul'},
+    3:{name:'Tabuada do 3', color:'#d6a000', soft:'#fff8d8', text:'#785500', icon:'⭐', thing:'estrelas', one:'estrela', theme:'amarelo'},
+    4:{name:'Tabuada do 4', color:'#188a55', soft:'#e5f8ef', text:'#085f3b', icon:'🍀', thing:'folhas', one:'folha', theme:'verde'},
+    5:{name:'Tabuada do 5', color:'#d44254', soft:'#ffebee', text:'#9a2738', icon:'❤️', thing:'corações', one:'coração', theme:'vermelho'},
+    6:{name:'Tabuada do 6', color:'#7c4cc9', soft:'#f1eafe', text:'#56318e', icon:'🌙', thing:'luas', one:'lua', theme:'violeta'},
+    7:{name:'Tabuada do 7', color:'#e0791b', soft:'#fff1df', text:'#914609', icon:'☀️', thing:'sóis', one:'sol', theme:'laranja'},
+    8:{name:'Tabuada do 8', color:'#00899c', soft:'#dff8fb', text:'#006170', icon:'🐟', thing:'peixes', one:'peixe', theme:'turquesa'},
+    9:{name:'Tabuada do 9', color:'#c44590', soft:'#ffe9f5', text:'#8e2362', icon:'🌸', thing:'flores', one:'flor', theme:'rosa'},
+    10:{name:'Tabuada do 10', color:'#4d54ba', soft:'#ededff', text:'#33398b', icon:'💎', thing:'diamantes', one:'diamante', theme:'anil'},
+    11:{name:'Tabuada do 11', color:'#5c7a15', soft:'#eff7d8', text:'#486111', icon:'🍏', thing:'maçãs', one:'maçã', theme:'lima'},
+    12:{name:'Tabuada do 12', color:'#8b5e34', soft:'#f7ecdf', text:'#6c4725', icon:'🪵', thing:'troncos', one:'tronco', theme:'castanho'}
+  };
+
+  const LEVELS=[
+    {name:'Campo Base', tables:[2,3], min:2, max:6, time:15, tip:'Conta por saltos pequenos: 2, 4, 6… ou 3, 6, 9…'},
+    {name:'Passo Inicial', tables:[2,3,4], min:2, max:7, time:15, tip:'Usa o desenho: cada grupo tem sempre o mesmo número de símbolos.'},
+    {name:'Subida Curta', tables:[2,3,4,5], min:2, max:8, time:14, tip:'Na do 5, pensa nos dedos de uma mão: 5, 10, 15…'},
+    {name:'Primeiro Miradouro', tables:[2,3,4,5], min:2, max:9, time:14, tip:'A tabuada do 4 é o dobro da do 2.'},
+    {name:'Ritmo de Marcha', tables:[3,4,5,6], min:2, max:9, time:13, tip:'Na do 6, pensa 5 vezes mais 1 vez.'},
+    {name:'Pedra Grande', tables:[3,4,5,6], min:2, max:10, time:13, tip:'Procura padrões: os resultados crescem sempre pelo mesmo salto.'},
+    {name:'Serpentina', tables:[4,5,6,7], min:2, max:10, time:12, tip:'A do 7 pede treino: repete mentalmente 7, 14, 21, 28…'},
+    {name:'Nuvem Baixa', tables:[4,5,6,7], min:2, max:11, time:12, tip:'Tenta imaginar os grupos antes de escolher a resposta.'},
+    {name:'Escadaria', tables:[5,6,7,8], min:2, max:11, time:11, tip:'A do 8 pode ser o dobro da do 4.'},
+    {name:'Acampamento Alto', tables:[5,6,7,8], min:2, max:12, time:11, tip:'Não adivinhes. Respira e escolhe só depois de pensar.'},
+    {name:'Parede Cinzenta', tables:[6,7,8,9], min:2, max:12, time:10, tip:'Na do 9, os algarismos do resultado muitas vezes ajudam a reconhecer o padrão.'},
+    {name:'Gelo Firme', tables:[3,4,6,7,8,9], min:2, max:12, time:10, tip:'Se souberes uma tabuada bem, usa-a para descobrir outra.'},
+    {name:'Cume Verde', tables:[4,5,6,7,8,9], min:3, max:12, time:9, tip:'Agora vale a pena pensar depressa e com calma ao mesmo tempo.'},
+    {name:'Vento Frio', tables:[4,5,6,7,8,9,10], min:3, max:12, time:9, tip:'A do 10 é uma pista boa: muitas respostas vizinhas ficam perto dela.'},
+    {name:'Crista Larga', tables:[5,6,7,8,9,10], min:3, max:12, time:8, tip:'Se erraste uma conta, ela volta mais tarde para treinares outra vez.'},
+    {name:'Pedra Solta', tables:[6,7,8,9,10,11], min:3, max:12, time:8, tip:'A do 11 aparece muito repetida: observa o padrão.'},
+    {name:'Quase no Topo', tables:[6,7,8,9,10,11,12], min:4, max:12, time:7, tip:'Já estás perto do topo. Mantém o foco em cada pergunta.'},
+    {name:'Neve Alta', tables:[7,8,9,10,11,12], min:4, max:12, time:7, tip:'As tabuadas mais difíceis precisam de confiança e rapidez.'},
+    {name:'Cume Final', tables:[8,9,10,11,12], min:4, max:12, time:6, tip:'Agora és quase mestre. Evita responder à pressa.'},
+    {name:'Topo dos Mestres', tables:[2,3,4,5,6,7,8,9,10,11,12], min:2, max:12, time:5, tip:'Nível máximo: todas as tabuadas, pouco tempo e cabeça fria.'}
+  ];
+
+  const $=id=>document.getElementById(id);
+  const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+  const plural=(n,one,many)=>n===1?one:many;
+  const posText=i=>LEVELS[i].name;
+
+  let state=loadState();
+  let timer=null;
+  let locked=false;
+
+  function loadState(){
+    const fresh={camp:0,bestCamp:0,session:null};
+    try{
+      const raw=JSON.parse(localStorage.getItem(APP_KEY)||'null');
+      if(!raw||!Number.isInteger(raw.camp)||raw.camp<0||raw.camp>=LEVELS.length) return fresh;
+      return {
+        camp:raw.camp,
+        bestCamp:clamp(Number(raw.bestCamp)||0,0,LEVELS.length-1),
+        session:null
+      };
+    }catch(e){return fresh;}
+  }
+
+  function saveState(){
+    try{localStorage.setItem(APP_KEY,JSON.stringify({camp:state.camp,bestCamp:state.bestCamp}));}catch(e){}
+  }
+
+  function level(){return LEVELS[state.camp];}
+
+  function buildPool(cfg){
+    const tasks=[];
+    for(const a of cfg.tables){
+      for(let b=cfg.min;b<=cfg.max;b++) tasks.push([a,b]);
+    }
+    return shuffle(tasks);
+  }
+
+  function shuffle(arr){
+    const a=arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function startSession(){
+    stopTimer();
+    locked=false;
+    $('summary').hidden=true;
+    const cfg=level();
+    state.session={
+      questionIndex:0,
+      correct:0,
+      wrong:0,
+      timeouts:0,
+      points:0,
+      total:SESSION_QUESTIONS,
+      pool:buildPool(cfg),
+      retry:[],
+      current:null,
+      startCamp:state.camp,
+      answers:[]
+    };
+    nextQuestion();
+    render();
+  }
+
+  function nextQuestion(){
+    const s=state.session;
+    const cfg=level();
+    if(!s) return;
+    if(s.questionIndex>=s.total){
+      finishSession();
+      return;
+    }
+    if(!s.pool.length) s.pool=buildPool(cfg);
+    let task=s.retry.length && Math.random()<0.45?s.retry.shift():s.pool.pop();
+    if(!task) task=s.pool.pop()||[cfg.tables[0],cfg.min];
+    const [a,b]=task;
+    const right=a*b;
+    const opts=makeOptions(a,b,right,cfg);
+    s.current={a,b,right,opts,timeTotal:cfg.time,timeLeft:cfg.time};
+    s.questionIndex+=1;
+    locked=false;
+    $('feedback').innerHTML='<strong>Escolhe com calma.</strong> Tens tempo, mas o relógio não espera.';
+    startTimer();
+    render();
+  }
+
+  function makeOptions(a,b,right,cfg){
+    const set=new Set([right]);
+    const tries=[
+      right+a,right-a,right+b,right-b,
+      (a+1)*b,(a-1>1?a-1:a+2)*b,a*(b+1),a*(b-1>1?b-1:b+2),
+      right+2,right-2,right+10,right-10
+    ];
+    for(const n of shuffle(tries)) if(Number.isInteger(n)&&n>0) set.add(n);
+    while(set.size<4){
+      const wiggle=Math.floor(Math.random()*8)+1;
+      const sign=Math.random()>.5?1:-1;
+      const n=right+wiggle*sign;
+      if(n>0) set.add(n);
+    }
+    return shuffle([...set].slice(0,4));
+  }
+
+  function startTimer(){
+    stopTimer();
+    const s=state.session;
+    if(!s||!s.current) return;
+    const current=s.current;
+    const started=Date.now();
+    timer=setInterval(()=>{
+      const elapsed=(Date.now()-started)/1000;
+      current.timeLeft=Math.max(0,current.timeTotal-elapsed);
+      renderTimer();
+      if(current.timeLeft<=0){
+        stopTimer();
+        answer(null,true);
+      }
+    },100);
+  }
+
+  function stopTimer(){ if(timer){ clearInterval(timer); timer=null; } }
+
+  function answer(choice,isTimeout=false){
+    const s=state.session;
+    if(!s||!s.current||locked) return;
+    locked=true;
+    stopTimer();
+    const q=s.current;
+    const good=!isTimeout && choice===q.right;
+    if(good){
+      s.correct+=1;
+      s.points+=10;
+      $('feedback').innerHTML=`<strong>Boa!</strong> ${q.a} × ${q.b} = ${q.right}. O alpinista ganhou força para subir.`;
+    }else if(isTimeout){
+      s.wrong+=1;
+      s.timeouts+=1;
+      if(!s.retry.some(t=>t[0]===q.a&&t[1]===q.b)) s.retry.push([q.a,q.b]);
+      $('feedback').innerHTML=`<strong>Faltou tempo.</strong> A resposta certa era ${q.right}. Esta conta vai voltar para treinares outra vez.`;
+    }else{
+      s.wrong+=1;
+      if(!s.retry.some(t=>t[0]===q.a&&t[1]===q.b)) s.retry.push([q.a,q.b]);
+      $('feedback').innerHTML=`<strong>Vamos corrigir.</strong> ${q.a} × ${q.b} = ${q.right}. Repara nos grupos e tenta memorizar o padrão.`;
+    }
+    s.answers.push({
+      a:q.a,b:q.b,right:q.right,choice,isTimeout,good
+    });
+    paintChoices(choice,q.right,isTimeout);
+    render();
+    setTimeout(()=>nextQuestion(),900);
+  }
+
+  function paintChoices(choice,right,isTimeout){
+    const buttons=[...$('options').querySelectorAll('button')];
+    buttons.forEach(btn=>{
+      const val=Number(btn.dataset.value);
+      btn.disabled=true;
+      btn.classList.remove('correct','wrong','dim');
+      if(val===right) btn.classList.add('correct');
+      else if(!isTimeout && val===choice) btn.classList.add('wrong');
+      else btn.classList.add('dim');
+    });
+  }
+
+  function finishSession(){
+    stopTimer();
+    const s=state.session;
+    if(!s) return;
+    const before=s.startCamp;
+    const move=movementFor(s.correct);
+    state.camp=clamp(state.camp+move,0,LEVELS.length-1);
+    state.bestCamp=Math.max(state.bestCamp,state.camp);
+    saveState();
+    render();
+    showSummary(before,state.camp,move,s);
+  }
+
+  function movementFor(correct){
+    if(correct>=9) return 2;
+    if(correct>=7) return 1;
+    if(correct>=5) return 0;
+    if(correct>=3) return -1;
+    return -2;
+  }
+
+  function render(){
+    renderLevelTrack();
+    renderPalette();
+    renderMountain();
+    renderQuestion();
+    renderTopStats();
+  }
+
+  function renderTopStats(){
+    const cfg=level();
+    $('heroLevel').textContent=`${state.camp+1} / 20`;
+    $('heroTime').textContent=`${cfg.time} s`;
+    $('heroQuestions').textContent=String(SESSION_QUESTIONS);
+    $('heroBest').textContent=`Nível ${state.bestCamp+1}`;
+    $('campBest').textContent=`Nível ${state.bestCamp+1} · ${posText(state.bestCamp)}`;
+    $('campNow').textContent=`Nível ${state.camp+1} · ${cfg.name}`;
+    $('toTop').textContent=`${LEVELS.length-1-state.camp} ${plural(LEVELS.length-1-state.camp,'passo','passos')}`;
+    $('levelTime').textContent=`${cfg.time} s`;
+  }
+
+  function renderLevelTrack(){
+    const box=$('levelTrack');
+    box.replaceChildren();
+    LEVELS.forEach((lv,i)=>{
+      const b=document.createElement('div');
+      b.className='level-pill'+(i<state.camp?' done':'')+(i===state.camp?' current':'');
+      b.textContent=i+1;
+      b.title=`Nível ${i+1} · ${lv.name} · ${lv.time}s`;
+      box.appendChild(b);
+    });
+  }
+
+  function renderPalette(){
+    const box=$('paletteGrid');
+    box.replaceChildren();
+    Object.entries(TABLES).forEach(([n,v])=>{
+      const card=document.createElement('div');
+      card.className='palette-item';
+      card.style.background=v.soft;
+      card.style.borderColor=v.color+'33';
+      card.innerHTML=`<strong style="color:${v.text}">${v.icon} ${n}</strong><small>${v.theme} · ${v.thing}</small>`;
+      box.appendChild(card);
+    });
+  }
+
+  function renderMountain(){
+    const path=$('path');
+    [...path.querySelectorAll('.camp')].forEach(n=>n.remove());
+    const important=[0,4,9,14,19];
+    important.forEach(i=>{
+      const dot=document.createElement('div');
+      dot.className='camp';
+      dot.style.bottom=(i/(LEVELS.length-1))*100+'%';
+      dot.innerHTML=`<i></i><span>${i===19?'Mestres':i+1}</span>`;
+      path.appendChild(dot);
+    });
+    $('climber').style.bottom=(state.camp/(LEVELS.length-1))*100+'%';
+  }
+
+  function renderQuestion(){
+    const s=state.session;
+    const cfg=level();
+    $('levelBadge').textContent=`Nível ${state.camp+1} · ${cfg.name}`;
+    $('levelDesc').textContent=`${listTables(cfg.tables)} · ${cfg.time} s por resposta`;
+    $('tip').textContent='Dica: '+cfg.tip;
+    if(!s||!s.current){
+      $('questionCounter').textContent=`Pergunta 0 de ${SESSION_QUESTIONS}`;
+      $('sessionScore').textContent='0 certas';
+      $('sessionFill').style.width='0%';
+      $('fact').textContent='2 × 4 = ?';
+      $('helper').textContent='Pensa assim: 2 grupos com 4 gotas em cada grupo.';
+      $('tableName').textContent='Tabuada do 2 · azul · gotas';
+      $('tableSymbol').textContent='💧';
+      $('meaningChip').textContent='Conta por grupos';
+      $('options').replaceChildren();
+      $('visualArea').replaceChildren();
+      renderTimer(true, cfg.time);
+      return;
+    }
+    const q=s.current;
+    const meta=TABLES[q.a];
+    document.documentElement.style.setProperty('--accent',meta.color);
+    document.documentElement.style.setProperty('--accent-soft',meta.soft);
+    document.documentElement.style.setProperty('--accent-text',meta.text);
+    $('questionCounter').textContent=`Pergunta ${s.questionIndex} de ${s.total}`;
+    $('sessionScore').textContent=`${s.correct} ${plural(s.correct,'certa','certas')}`;
+    $('sessionFill').style.width=((s.questionIndex-1)/s.total*100)+'%';
+    $('fact').textContent=`${q.a} × ${q.b} = ?`;
+    $('helper').textContent=`Pensa assim: ${q.a} grupos com ${q.b} ${plural(q.b,meta.one,meta.thing)} em cada grupo.`;
+    $('tableName').textContent=`${meta.name} · ${meta.theme} · ${meta.thing}`;
+    $('tableSymbol').textContent=meta.icon;
+    $('meaningChip').textContent=`${q.a} grupos iguais`;
+    const chip=$('tableChip');
+    chip.style.background='#fff';
+    chip.style.color=meta.text;
+    chip.style.boxShadow='0 8px 24px rgba(30,41,59,.06)';
+    chip.style.border='1px solid '+meta.color+'33';
+    $('questionCard').style.background=`linear-gradient(180deg, ${meta.soft} 0, #ffffff 82%)`;
+    renderVisual(q,meta);
+    renderOptions(q);
+    renderTimer();
+  }
+
+  function renderVisual(q,meta){
+    const box=$('visualArea');
+    box.replaceChildren();
+    const groupsToShow=Math.min(q.a,6);
+    for(let i=0;i<groupsToShow;i++){
+      const g=document.createElement('div');
+      g.className='group';
+      const shown=Math.min(q.b,6);
+      let tokens='';
+      for(let j=0;j<shown;j++) tokens+=`<span class="token">${meta.icon}</span>`;
+      const extra=q.b-shown;
+      g.innerHTML=`<span class="group-label">Grupo ${i+1}</span><div class="tokens">${tokens}${extra>0?`<span class="more">+${extra}</span>`:''}</div>`;
+      box.appendChild(g);
+    }
+    if(q.a>groupsToShow){
+      const more=document.createElement('div');
+      more.className='group';
+      more.innerHTML=`<span class="group-label">Mais grupos</span><div class="tokens"><span class="more">+${q.a-groupsToShow} grupos</span></div>`;
+      box.appendChild(more);
+    }
+  }
+
+  function renderOptions(q){
+    const box=$('options');
+    box.replaceChildren();
+    q.opts.forEach(v=>{
+      const b=document.createElement('button');
+      b.type='button';
+      b.className='option';
+      b.dataset.value=String(v);
+      b.textContent=String(v);
+      b.addEventListener('click',()=>answer(v,false));
+      box.appendChild(b);
+    });
+  }
+
+  function renderTimer(force=false,fallback=0){
+    const s=state.session;
+    const q=s&&s.current?s.current:null;
+    const total=q?q.timeTotal:fallback||level().time;
+    const left=q?Math.max(0,q.timeLeft):total;
+    $('timerText').textContent=`${Math.ceil(left)} s`;
+    const pct=total?left/total*100:0;
+    const fill=$('timerFill');
+    fill.style.width=pct+'%';
+    fill.classList.remove('warn','danger');
+    if(pct<=35) fill.classList.add('warn');
+    if(pct<=15) fill.classList.add('danger');
+    if(force) fill.style.width='100%';
+  }
+
+  function showSummary(before,after,move,s){
+    const box=$('summary');
+    const title=$('summaryTitle');
+    const text=$('summaryText');
+    const badge=$('summaryBadge');
+    const imageText=$('summaryImageText');
+    const foot=$('summaryFootnote');
+    const delta=Math.abs(move);
+    const movedLabel=`${delta} ${plural(delta,'acampamento','acampamentos')}`;
+    $('sumCorrect').textContent=String(s.correct);
+    $('sumWrong').textContent=String(s.wrong);
+    $('sumTime').textContent=String(s.timeouts);
+    $('sumMove').textContent=(move>0?'+':'')+String(move);
+    if(move>0){
+      badge.textContent='Boa subida';
+      badge.style.background='#e9faf1';
+      badge.style.color='#0f6f52';
+      title.textContent='Excelente sessão!';
+      text.textContent=`Acertaste ${s.correct} de ${s.total}. O alpinista subiu ${movedLabel} e chegou ao nível ${after+1}.`;
+      imageText.textContent='O alpinista subiu a montanha.';
+      foot.textContent=after===LEVELS.length-1?'Chegaste ao Topo dos Mestres. Continua a treinar para te manteres lá!':'Continua assim para chegares ao topo dos mestres.';
+      $('summaryClimber').textContent=after===LEVELS.length-1?'🏆':'🧗';
+    }else if(move<0){
+      badge.textContent='Sessão para treinar';
+      badge.style.background='#fff1f1';
+      badge.style.color='#a03646';
+      title.textContent='Hoje foi preciso recuar um pouco';
+      text.textContent=`Acertaste ${s.correct} de ${s.total}. O alpinista desceu ${movedLabel} e ficou no nível ${after+1}.`;
+      imageText.textContent='O alpinista desceu para ganhar força.';
+      foot.textContent='Sem problema. A próxima sessão serve para recuperar terreno.';
+      $('summaryClimber').textContent='🥾';
+    }else{
+      badge.textContent='Mantiveste a posição';
+      badge.style.background='#f4f7fd';
+      badge.style.color='#445770';
+      title.textContent='Sessão equilibrada';
+      text.textContent=`Acertaste ${s.correct} de ${s.total}. O alpinista ficou no mesmo acampamento: nível ${after+1}.`;
+      imageText.textContent='O alpinista manteve a posição.';
+      foot.textContent='Mais uma boa sessão e a subida continua.';
+      $('summaryClimber').textContent='🙂';
+    }
+    box.hidden=false;
+    box.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function listTables(list){
+    return list.map(n=>String(n)).join(', ');
+  }
+
+  function resetAll(){
+    if(!confirm('Queres mesmo apagar todo o progresso do alpinista?')) return;
+    stopTimer();
+    try{localStorage.removeItem(APP_KEY);}catch(e){}
+    state={camp:0,bestCamp:0,session:null};
+    render();
+    startSession();
+  }
+
+  $('restartSession').addEventListener('click',startSession);
+  $('playAgain').addEventListener('click',startSession);
+  $('resetProgress').addEventListener('click',resetAll);
+
+  render();
+  startSession();
 })();
 </script>
-</body></html>
+</body>
+</html>
