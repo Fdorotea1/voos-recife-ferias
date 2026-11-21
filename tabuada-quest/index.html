@@ -467,6 +467,7 @@ button:disabled{cursor:default;opacity:.6}
   let recoveryTimer=null;
   let advanceTimer=null;
   let locked=false;
+  let pendingFeedback=null;
   const VOICE_STORAGE='montanha_raquel_neural_enabled';
   const VOICE_BASE='./audio/raquel/';
   const narrator={
@@ -523,10 +524,22 @@ button:disabled{cursor:default;opacity:.6}
       this.enabled=!this.enabled;
       try{localStorage.setItem(VOICE_STORAGE,this.enabled?'on':'off');}catch(e){}
       this.stop();this.updateButtons();this.status();
+      // Se desligar a voz durante o feedback, não bloquear a pergunta.
+      if(pendingFeedback && locked && state.session?.phase==='game'){
+        stopAdvance();
+        if(this.enabled)playFeedback();
+        else queueAdvanceAfterFeedback();
+        return;
+      }
       this.activateQuestionClock();
       if(this.enabled)this.repeat();
     },
     repeat(){
+      if(pendingFeedback && locked && state.session?.phase==='game'){
+        stopAdvance();
+        playFeedback();
+        return;
+      }
       this.activateQuestionClock();
       const s=state.session;
       if(s?.phase==='game'&&s.current){
@@ -617,6 +630,26 @@ button:disabled{cursor:default;opacity:.6}
     if(advanceTimer!==null){clearTimeout(advanceTimer);advanceTimer=null;}
   }
 
+  // A próxima pergunta só aparece quando a locução do resultado tiver TERMINADO.
+  // Guardas de sessão/pergunta evitam que um áudio antigo faça o jogo avançar.
+  function queueAdvanceAfterFeedback(){
+    const f=pendingFeedback;
+    if(!f || state.session!==f.session || f.session.phase!=='game' || f.session.current!==f.question || !locked)return;
+    stopAdvance();
+    advanceTimer=setTimeout(()=>{
+      advanceTimer=null;
+      if(pendingFeedback!==f || state.session!==f.session || f.session.current!==f.question)return;
+      pendingFeedback=null;
+      nextQuestion();
+    },650);
+  }
+
+  function playFeedback(){
+    const f=pendingFeedback;
+    if(!f)return;
+    narrator.say(f.key,f.text,queueAdvanceAfterFeedback);
+  }
+
   function stopRecoveryTimer(){
     if(recoveryTimer!==null){clearInterval(recoveryTimer);recoveryTimer=null;}
   }
@@ -673,6 +706,7 @@ button:disabled{cursor:default;opacity:.6}
     stopTimer();
     stopRecoveryTimer();
     stopAdvance();
+    pendingFeedback=null;
     locked=false;
     $('recoveryPanel').hidden=true;
     $('summary').hidden=true;
@@ -704,6 +738,7 @@ button:disabled{cursor:default;opacity:.6}
     const s=state.session;
     const cfg=level();
     if(!s||s.phase!=='game') return;
+    pendingFeedback=null;
     if(s.questionIndex>=s.total){
       finishSession();
       return;
@@ -789,9 +824,13 @@ button:disabled{cursor:default;opacity:.6}
     s.answers.push({
       a:q.a,b:q.b,right:q.right,choice,isTimeout,good
     });
-    narrator.say(good?'correct':isTimeout?'timeout':'incorrect',good?'Muito bem!':isTimeout?'Tempo esgotado!':'Tenta novamente na próxima vez.');
+    pendingFeedback={
+      session:s,question:q,
+      key:good?'correct':isTimeout?'timeout':'incorrect',
+      text:good?'Muito bem!':isTimeout?'Tempo esgotado!':'Tenta novamente na próxima vez.'
+    };
     render();
-    advanceTimer=setTimeout(()=>{advanceTimer=null;nextQuestion();},1350);
+    playFeedback();
   }
 
   function finishSession(){
@@ -1317,6 +1356,7 @@ button:disabled{cursor:default;opacity:.6}
     stopTimer();
     stopRecoveryTimer();
     stopAdvance();
+    pendingFeedback=null;
     try{localStorage.removeItem(APP_KEY);}catch(e){}
     state={camp:0,bestCamp:0,steps:0,session:null};
     render();
